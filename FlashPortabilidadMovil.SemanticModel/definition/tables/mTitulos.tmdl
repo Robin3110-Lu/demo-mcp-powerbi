@@ -44,7 +44,7 @@ table mTitulos
 			```
 		lineageTag: e0ccf35f-bda7-4612-a26a-7877264c5ca9
 
-	measure 'Titulo Grafico Robin' = ```
+	measure 'Titulo Grafico Region Hoja 9' = ```
 			SELECTEDVALUE('Indicadores Port'[Indicador])&", Regional" 
 			```
 		lineageTag: 7169583c-abc1-49a1-a91c-c4150cda6199
