@@ -1,0 +1,319 @@
+table mVariaciones
+	lineageTag: f8c1c776-7541-4433-96b7-3d1a1728e5a1
+
+	measure MesAnteriorPorIn = ```
+			
+			var vFechaMaxSel = MAX('Dim Calendario'[Date])
+			var vFechaInicioMesAnterior = 
+			        EOMONTH(vFechaMaxSel,-2)+1
+			var vFechaFinMesAnterior = 
+			        EOMONTH(vFechaMaxSel,-1)
+			return
+			
+			        CALCULATE(
+			            [Port-In Mes Actual],
+			            'Dim Calendario'[Date]>=vFechaInicioMesAnterior,
+			            'Dim Calendario'[Date]<=vFechaFinMesAnterior
+			        )
+			```
+		formatString: #,0
+		lineageTag: f71fbd7c-7568-4a2a-89ce-462adcd23ac0
+
+	measure MesAnteriorPorOut = ```
+			
+			var vFechaMaxSel = MAX('Dim Calendario'[Date])
+			var vFechaInicioMesAnterior = 
+			        EOMONTH(vFechaMaxSel,-2)+1
+			var vFechaFinMesAnterior = 
+			        EOMONTH(vFechaMaxSel,-1)
+			return
+			
+			        CALCULATE(
+			            [Port-Out Mes Actual],
+			            'Dim Calendario'[Date]>=vFechaInicioMesAnterior,
+			            'Dim Calendario'[Date]<=vFechaFinMesAnterior
+			        )
+			```
+		formatString: #,0
+		lineageTag: e7f88586-8eee-496c-bdc0-5df4dc7a12bf
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure MesAnteriorPortNeto = ```
+			[MesAnteriorPorIn]-[MesAnteriorPorOut] 
+			```
+		formatString: #,0
+		lineageTag: 3759884e-387a-4275-91fd-dffa83aca534
+
+	measure 'MoM Port-In' = ```
+			[Port-In Mes Actual]-[MesAnteriorPorIn] 
+			```
+		formatString: #,0
+		lineageTag: f6a0e52c-9f5b-4192-ba42-dac14cd00b64
+
+	measure '%MoM Port-In' = ```
+			
+			if(not ISBLANK([MesAnteriorPorIn]),
+			DIVIDE([Port-In Mes Actual]-[MesAnteriorPorIn],[MesAnteriorPorIn])) 
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 5a6db2c1-e70a-444a-a696-2fc4175c802f
+
+	measure 'MoM Port-Out' = ```
+			[Port-Out Mes Actual]-[MesAnteriorPorOut] 
+			```
+		formatString: #,0
+		lineageTag: 4725c6e7-7f0d-40ad-a133-61313c9db448
+
+	measure '%MoM Port-Out' = ```
+			
+			if(not ISBLANK([MesAnteriorPorOut]),
+			DIVIDE([Port-Out Mes Actual]-[MesAnteriorPorOut],[MesAnteriorPorOut])) 
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: c7790607-4484-4cd7-863b-2c9fedf48e9f
+
+	measure 'MoM Port-Neto' = ```
+			[Port-Neto Mes Actual]-[MesAnteriorPortNeto] 
+			```
+		formatString: #,0
+		lineageTag: 159e6c08-22e1-461c-bebb-cdd7e7c782a4
+
+	measure '%MoM Port-Neto' = ```
+			
+			if(not ISBLANK([MesAnteriorPortNeto]),
+			DIVIDE([Port-Neto Mes Actual]-[MesAnteriorPortNeto],[MesAnteriorPortNeto])) 
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: bf0da564-9359-4ea0-8ae2-a4e9564e5a6d
+
+	measure 'PortNeto Mes Año Anterior' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			 var vAnoSel = CALCULATE(MAX('Dim Calendario'[Año]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			 RETURN
+			 CALCULATE([Port Neto Ubicacion],
+			                FILTER(all('Dim Calendario'),
+			                        'Dim Calendario'[Mes Numero] = vMesSel &&
+			                         'Dim Calendario'[Año]= vAnoSel-1))
+			```
+		lineageTag: 5257a9a2-ebed-4e8a-842a-17f428757e55
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YoY Port-Neto' = [Port Neto Ubicacion]-[PortNeto Mes Año Anterior]
+		formatString: #,0
+		lineageTag: e836d2c1-3405-4280-8a44-0246e17611de
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '%YoY Port-Neto' = divide([Port Neto Ubicacion]-[PortNeto  Año Anterior],[PortNeto  Año Anterior])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: f6dc64ea-f6d2-49d5-8f5b-d47b31578842
+
+	measure 'YTD 2025' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			    CALCULATE(
+			        [Port Neto Ubicacion],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2025 && 'Dim Calendario'[Mes Numero]<=vMesSel))
+			```
+		formatString: #,0
+		lineageTag: 84c0ac84-5f93-4f93-bb06-99e0a02e3f82
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'YTD 2024' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			    CALCULATE(
+			        [Port Neto Ubicacion],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2024 && 'Dim Calendario'[Mes Numero]<=vMesSel))
+			```
+		formatString: #,0
+		lineageTag: 3a7bf863-c2df-4f49-92bc-be739dcc058e
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '%YoY Port-Out' = divide([Port Out Ubicacion]-[PortOut  Año Anterior],[PortOut  Año Anterior])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 2e74a0fb-8d27-45d2-bf69-f6edd9b253bb
+
+	measure 'PortOut Mes Año Anterior' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			 var vAnoSel = CALCULATE(MAX('Dim Calendario'[Año]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			 RETURN
+			 CALCULATE([Port Out Ubicacion],
+			                FILTER(all('Dim Calendario'),
+			                        'Dim Calendario'[Mes Numero] = vMesSel &&
+			                         'Dim Calendario'[Año]= vAnoSel-1))
+			```
+		lineageTag: e6890cc8-519b-4db9-a825-70b47265ff85
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PortIn Mes Año Anterior' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			 var vAnoSel = CALCULATE(MAX('Dim Calendario'[Año]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			 RETURN
+			 CALCULATE([Port In Ubicacion],
+			                FILTER(all('Dim Calendario'),
+			                        'Dim Calendario'[Mes Numero] = vMesSel &&
+			                         'Dim Calendario'[Año]= vAnoSel-1))
+			```
+		lineageTag: c1e1e1fd-42ca-4366-bc28-7392951672ce
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '%YoY Port-In' = divide([Port In Ubicacion]-[PortIn  Año Anterior],[PortIn  Año Anterior])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 26a59a9e-46b8-4331-8b19-395168fb8f44
+
+	measure 'YTD Port In 2025 Canal-Ubicacion' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			    CALCULATE(
+			        [Port In Canal-Ubicacion],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2025 ))
+			```
+		lineageTag: e1eee554-9044-4925-a92d-b5f9171df341
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YTD Port In 2025 Ubicacion' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			    CALCULATE(
+			        [Port In Ubicacion],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2025 && 'Dim Calendario'[Mes Numero]<=vMesSel))
+			```
+		lineageTag: e52fbe7b-a82a-4778-8367-bf2025f83f55
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PortIn  Año Anterior' = ```
+			
+			
+			 var vAnoSel =MAX('Dim Calendario'[Año])
+			 RETURN
+			 CALCULATE([Port In Ubicacion],
+			                FILTER(all('Dim Calendario'),
+			                      
+			                         'Dim Calendario'[Año]= vAnoSel-1))
+			```
+		lineageTag: c26c4c8d-b3c3-4fa3-8213-a7e1615875b0
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PortOut  Año Anterior' = ```
+			
+			
+			 var vAnoSel =MAX('Dim Calendario'[Año])
+			 RETURN
+			 CALCULATE([Port Out Ubicacion],
+			                FILTER(all('Dim Calendario'),
+			                      
+			                         'Dim Calendario'[Año]= vAnoSel-1))
+			```
+		lineageTag: aa2ba46e-23ba-4bf6-ae2f-c64ca2b2047e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PortNeto  Año Anterior' = ```
+			
+			
+			 var vAnoSel =MAX('Dim Calendario'[Año])
+			 RETURN
+			 CALCULATE([Port Neto Ubicacion],
+			                FILTER(all('Dim Calendario'),
+			                      
+			                         'Dim Calendario'[Año]= vAnoSel-1))
+			```
+		lineageTag: 40249ba8-cd05-4f96-a2de-872c69af878c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'YTD Port Out 2025 Ubicacion' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			    CALCULATE(
+			        [Port Out Ubicacion],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2025 && 'Dim Calendario'[Mes Numero]<=vMesSel))
+			```
+		lineageTag: 74744e89-a7f7-4402-b8ee-c61c1214f7de
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-In Mes Actual' = ```
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vSelectorVista = SELECTEDVALUE(Vista[Descripcion])
+			
+			return
+			if(vSelectorVista in{"Parcial","Ambos"},
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port In Ubicacion],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Port In Ubicacion],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port In Ubicacion],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])-1),CALCULATE([Port In Ubicacion],'Dim Calendario'[Mes-Año]=vMesEscogido))) 
+			```
+		formatString: #,0
+		lineageTag: 28271ae5-d19f-4c69-beaf-7041cbbdf8fd
+
+	measure 'Port-Out Mes Actual' = ```
+			
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vSelectorVista = SELECTEDVALUE(Vista[Descripcion])
+			
+			return
+			if(vSelectorVista in{"Parcial","Ambos"},
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port Out Ubicacion],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Port Out Ubicacion],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port Out Ubicacion],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])-1),CALCULATE([Port Out Ubicacion],'Dim Calendario'[Mes-Año]=vMesEscogido))) 
+			```
+		formatString: #,0
+		lineageTag: a69038b7-2925-4394-99f5-1e2638a3725f
+
+	measure 'Port-Neto Mes Actual' = ```
+			
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vSelectorVista = SELECTEDVALUE(Vista[Descripcion])
+			
+			return
+			if(vSelectorVista in{"Parcial","Ambos"},
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port Neto Ubicacion],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Port In Ubicacion],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port Neto Ubicacion],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])-1),CALCULATE([Port Neto Ubicacion],'Dim Calendario'[Mes-Año]=vMesEscogido))) 
+			```
+		formatString: #,0
+		lineageTag: 629f163c-5921-433d-8cd0-fdb0357dc15b
+
+	partition mVariaciones = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+

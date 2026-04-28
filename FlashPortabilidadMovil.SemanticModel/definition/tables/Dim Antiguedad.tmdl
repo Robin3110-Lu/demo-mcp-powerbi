@@ -1,0 +1,42 @@
+table 'Dim Antiguedad'
+	lineageTag: 38ab9ed3-ed29-4d9f-8859-50175039cd8c
+
+	column NumAntiguedad
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 62917d02-1e60-4fc5-946e-aee7aaa2b98c
+		summarizeBy: none
+		sourceColumn: NUM_ANTIGUEDAD
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RangoAntiguedad
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: e381cef2-6ebc-40a1-87c5-b397d9d1276f
+		summarizeBy: none
+		sourceColumn: RANGO_ANTIGUEDAD
+		sortByColumn: NumAntiguedad
+
+		changedProperty = SortByColumn
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Dim Antiguedad' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select * from CLIINC.C27612_DIM_ANTIGUEDAD ", CreateNavigationProperties=false])
+				in
+				    Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

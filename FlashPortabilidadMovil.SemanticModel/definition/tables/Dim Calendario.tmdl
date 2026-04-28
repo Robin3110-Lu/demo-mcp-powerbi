@@ -1,0 +1,259 @@
+table 'Dim Calendario'
+	lineageTag: 053c3a99-3c6f-45ad-b326-8bba713651e9
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: General Date
+		lineageTag: f758e110-13ed-4068-bdd5-9bebc14c21cc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año = YEAR('Dim Calendario'[Date])
+		formatString: 0
+		lineageTag: f9515b14-9f2a-411e-a337-b743ecb759df
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column MesNombre =
+			
+			var mes_ =FORMAT('Dim Calendario'[Date],"mmmm")
+			RETURN REPLACE(mes_, 1, 1, UPPER(LEFT(LEFT(mes_))))
+		lineageTag: 72f78588-47dd-4673-b51f-4555222d3579
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes = ```
+			
+			        VAR _X = FORMAT('Dim Calendario'[Date],"mmmm")
+			        VAR _Y = UPPER(LEFT(_X))
+			        VAR _Z = MID(_X,2,2)
+			
+			
+			        RETURN
+			        _Y&_Z
+			```
+		lineageTag: a4d8a694-e18f-4b90-9e4f-63d5e3a9800f
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes-Año =
+			
+			var periodo_ = FORMAT('Dim Calendario'[Date], "mmm-yyyy")
+			return REPLACE(periodo_, 1, 1, UPPER(LEFT(LEFT(periodo_))))
+		lineageTag: 4643069e-53f7-463b-8401-58484b7dfb79
+		summarizeBy: none
+		sortByColumn: 'Año Mes Índice'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Mes' = CONVERT(FORMAT('Dim Calendario'[Date], "yyyymm"), INTEGER)
+		formatString: 0
+		lineageTag: 401e5ff0-dcaf-4d40-bd97-14c0729550af
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Numero' = MONTH('Dim Calendario'[Date])
+		formatString: 0
+		lineageTag: fdd43b3d-98e0-4212-8afe-bacf957d9e12
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Dia = DAY('Dim Calendario'[Date])
+		formatString: 0
+		lineageTag: 349fc7fc-c99c-48d1-ad5e-f567c8af0ec7
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Corto' =
+			
+			SWITCH('Dim Calendario'[Mes Numero],
+			        1,"Ene",
+			        2,"Feb",
+			        3,"Mar",
+			        4,"Abr",
+			        5,"May",
+			        6,"Jun",
+			        7,"Jul",
+			        8,"Ago",
+			        9,"Sep",
+			        10,"Oct",
+			        11,"Nov",
+			        12,"Dic"
+			)
+		lineageTag: fb645c85-fd4f-448d-9641-5aded3e7314d
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Periodo = FORMAT('Dim Calendario'[Date],"YYYYMM")
+		lineageTag: 8a0544d0-4891-4806-a31c-0f8290509979
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Orden Mes Año' = FORMAT('Dim Calendario'[Date],"YYMM")
+		lineageTag: a5e8789c-73db-4b22-8ec9-a97bef2798b2
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Año Mes Índice' = 'Dim Calendario'[Año]&"-"&FORMAT(MONTH('Dim Calendario'[Date]),"00")
+		lineageTag: 5efc194b-c87c-4488-8194-20fdbf392152
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Índice =
+			COUNTROWS(
+			                FILTER(VALUES('Dim Calendario'[Año Mes Índice]),
+			                       'Dim Calendario'[Año Mes Índice]<EARLIER('Dim Calendario'[Año Mes Índice])
+			))--+1
+		formatString: 0
+		lineageTag: 14c710f5-f606-4e15-821a-94e9a55e18e4
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Completo' = ```
+			
+			    VAR vMaxMes = MAX('Dim Calendario'[Date])
+			    VAR vEsteMesID =
+			        LOOKUPVALUE('Dim Calendario'[Índice],'Dim Calendario'[Date],vMaxMes)
+			    RETURN 'Dim Calendario'[Índice] < vEsteMesID     
+			```
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: beae3042-c5c6-483f-a9c1-3ac65322cde1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Previo Día Corte' = ```
+			
+			    VAR _MaxMes = MAX('Dim Calendario'[Date])
+			    VAR _EsteMesID =
+			        LOOKUPVALUE('Dim Calendario'[Índice],'Dim Calendario'[Date],_MaxMes)
+			    RETURN IF( 'Dim Calendario'[Índice] < _EsteMesID ,0 ,'Dim Calendario'[Dia])    
+			```
+		formatString: 0
+		lineageTag: 861c0844-349d-4217-a7e9-4448347ffba5
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Corte' = ```
+			
+			    'Dim Calendario'[Dia]=LOOKUPVALUE('Dim Calendario'[Dia],'Dim Calendario'[Previo Día Corte],'Dim Calendario'[Dia])
+			```
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c6e2b701-d8e2-4de7-8f58-6f3cc9d9f326
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Mes' = 'Dim Calendario'[Día Corte]& " " & FORMAT('Dim Calendario'[Date],"dd/mm/yy")
+		lineageTag: db3473bc-4b64-427e-bdf7-fd078db7472b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Corto' = ```
+			
+			SWITCH(WEEKDAY('Dim Calendario'[Date],2),
+			      
+			        1,"Lun",
+			        2,"Mar",
+			        3,"Mie",
+			        4,"Jue",
+			        5,"Vie",
+			        6,"Sab",
+			        7,"Dom"
+			)
+			```
+		lineageTag: 2b24d595-59db-40d2-a1c8-541808066de6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Último Periodo' = IF('Dim Calendario'[Periodo] = FORMAT(max('Dim Calendario'[Date]),"YYYYMM"),"Último Periodo",'Dim Calendario'[Mes-Año])
+		lineageTag: c0000f82-fad7-4768-8e7d-086ae628427a
+		summarizeBy: none
+		sortByColumn: 'Año Mes'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Día' = FORMAT('Dim Calendario'[Date],"MMDDY")
+		lineageTag: 63b995f9-e5ba-42ba-b2dd-ed9745e79a03
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column FechaDiaria = ```
+			'Dim Calendario'[Día Corto]&" "&FORMAT('Dim Calendario'[Date],"DD-MM-YY") 
+			```
+		lineageTag: 1928d9aa-6405-4b0f-aa42-ef94c9215b2a
+		summarizeBy: none
+		sortByColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column SemanaEstandar = if(LEN('Dim Calendario'[SemanaAño])=1,[Año]&" - "&"0"&'Dim Calendario'[SemanaAño],[Año]&" - "&'Dim Calendario'[SemanaAño])
+		lineageTag: cd8b827f-3d74-4ce5-bb3d-707d9f538d34
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column SemanaAño = ```
+			WEEKNUM('Dim Calendario'[Date],2)
+			
+			```
+		dataType: int64
+		formatString: 0
+		lineageTag: b43fd3c2-6626-4d30-80fd-5e4d0b862d5b
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column DiaSemana = ```
+			WEEKDAY('Dim Calendario'[Date],2) 
+			```
+		formatString: 0
+		lineageTag: a0fa21cd-4691-4e80-a97c-54baad811faf
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column AñoSemana = FORMAT('Dim Calendario'[Date],"WWYYYY")
+		dataType: int64
+		formatString: 0
+		lineageTag: c35c0e1d-a3fc-4a65-96a6-7a3f8357b26a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'FechaDiaria Jerarquía'
+		lineageTag: 139201c4-cdec-49c3-80b5-9f9b5523a183
+
+		level Mes-Año
+			lineageTag: 4ec0413e-87ea-4f4b-8bf3-49b3514da5fa
+			column: Mes-Año
+
+		level FechaDiaria
+			lineageTag: 83f050c9-c58a-4e5b-b8c5-142236160e21
+			column: FechaDiaria
+
+	partition 'Dim Calendario' = calculated
+		mode: import
+		source = CALENDAR(MIN('Fact FlashPortabilidad'[Fecha]),MAX('Fact FlashPortabilidad'[Fecha]))
+
+	annotation PBI_Id = 324c97df33a045ed8dc7c6bb449e7a66
+

@@ -1,0 +1,42 @@
+table 'Dim CF'
+	lineageTag: 3ee1b1bd-dbf3-473d-9cda-b993f9ecc0c1
+
+	column NumRango
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: cdf897a1-621e-460e-a309-5bc4a3e8befc
+		summarizeBy: none
+		sourceColumn: NUM_RANGO
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Rango
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: c0310aa9-9890-42c3-9180-675725f62012
+		summarizeBy: none
+		sourceColumn: RANGO
+		sortByColumn: NumRango
+
+		changedProperty = SortByColumn
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Dim CF' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select * from CLIINC.C27612_DIM_CF ", CreateNavigationProperties=false])
+				in
+				    Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,42 @@
+table TablaActualización
+	lineageTag: bcbec9c4-027c-41c1-beb7-42826a71ff65
+
+	measure 'Fecha Actualización DataSet' = MAX('Fact FlashPortabilidad'[Fecha]) +1
+		formatString: Short Date
+		lineageTag: acaf7c0a-4a77-4953-b124-2055293123a5
+
+	measure 'Fecha Actualización DataSet Hoja 1' = ```
+			MAX('Fact FlashPortabilidad'[Fecha]) 
+			```
+		formatString: Short Date
+		lineageTag: 875ef205-a66a-45da-874a-af37e73fda8c
+
+	column 'Ultima Fecha de Actualización'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: db40ae90-57b0-4f4c-8ecd-e4becec97436
+		summarizeBy: none
+		sourceColumn: Ultima Fecha de Actualización
+
+		variation Variación
+			isDefault
+			relationship: 37358e30-8adf-49f9-aa97-3e1d8b7dda67
+			defaultHierarchy: LocalDateTable_685b0a62-05c7-44de-a112-dc4a362d45a8.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition TablaActualización = m
+		mode: import
+		source =
+				let
+				    Origen = DateTime.FixedLocalNow(),
+				    #"Convertida en tabla" = #table(1, {{Origen}}),
+				    #"Columnas con nombre cambiado" = Table.RenameColumns(#"Convertida en tabla",{{"Column1", "Ultima Fecha de Actualización"}}),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Columnas con nombre cambiado",{{"Ultima Fecha de Actualización", type datetime}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,26 @@
+table Días
+	lineageTag: d9df58ff-6caa-4e5c-a38f-95d4ef878530
+
+	measure 'Valor de Parámetro' = SELECTEDVALUE('Días'[Días])
+		formatString: 0
+		lineageTag: 712a866d-d7fe-44a0-9dfe-aade954a5983
+
+	column Días
+		formatString: 0
+		lineageTag: 415a3149-642d-40ac-a302-3ff15d59a433
+		summarizeBy: none
+		sourceColumn: [Value]
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 0
+				}
+
+		annotation SummarizationSetBy = User
+
+	partition Días = calculated
+		mode: import
+		source = GENERATESERIES(1, 31, 1)
+
+	annotation PBI_Id = 68284ae2e748494597ae42795cdaa7ab
+

@@ -1,0 +1,79 @@
+table 'Dim Segmento'
+	lineageTag: 2733687c-d8b9-42c6-8cca-775b04f7a4a3
+
+	column SegmentoID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 94bf981f-70ea-4cc5-b141-2942ec1a6a1e
+		summarizeBy: none
+		sourceColumn: SEGMENTO_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DesSegmento
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: f4e98136-0dc2-4151-917e-d9ab91a15806
+		summarizeBy: none
+		sourceColumn: DES_SEGMENTO
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column FormaContratación
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 596549c0-f57c-4df9-875e-67fedccda998
+		summarizeBy: none
+		sourceColumn: DES_FORMA_CONTRATACION
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column FORMA_CONTRATACION_ID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 2843f68c-369b-4ddf-b56b-519e1fd78cc6
+		summarizeBy: none
+		sourceColumn: FORMA_CONTRATACION_ID
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Abreviatura = SWITCH(true(),'Dim Segmento'[SegmentoID]=1,"Po.Masivo",'Dim Segmento'[SegmentoID]=2,"Po.Negocios",'Dim Segmento'[SegmentoID]=3,"Po.Empresas",'Dim Segmento'[SegmentoID]=4,"Po.Mayores",'Dim Segmento'[SegmentoID]=5,"Pre.Masivo")
+		lineageTag: a809d72e-f15f-4930-9867-918ae1ae1a2e
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'DesSegmento Jerarquía'
+		lineageTag: 2c8520d8-e625-423b-9414-db5cb280efce
+
+		level FormaContratación
+			lineageTag: 2b858ec9-ec8b-4b8d-ba87-d06fc167ca4a
+			column: FormaContratación
+
+		level DesSegmento
+			lineageTag: 77fb00b8-bde7-4482-afcf-5576844b8af2
+			column: DesSegmento
+
+	partition 'Dim Segmento' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select * from CLIINC.DIM_SEGMENTO_DE_MERCADO_PBI", CreateNavigationProperties=false]),
+				    #"Columnas reordenadas" = Table.ReorderColumns(Origen,{"SEGMENTO_ID", "DES_FORMA_CONTRATACION", "DES_SEGMENTO", "FORMA_CONTRATACION_ID"})
+				in
+				    #"Columnas reordenadas"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

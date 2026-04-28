@@ -1,0 +1,48 @@
+table ParámetroFechas
+	lineageTag: d2e9ab8e-fcd2-4ec1-9a85-bfbe7cc6e3ef
+
+	column ParámetroFechas
+		lineageTag: 4459c96f-b243-4520-b7dd-e191e8265036
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'ParámetroFechas Orden'
+
+		relatedColumnDetails
+			groupByColumn: 'ParámetroFechas Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ParámetroFechas Campos'
+		isHidden
+		lineageTag: 2d1b9311-b12b-4049-b4d7-2dbb1845603a
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'ParámetroFechas Orden'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ParámetroFechas Orden'
+		isHidden
+		formatString: 0
+		lineageTag: 93da3896-e96a-4f8d-a2bc-fe2d11050d42
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParámetroFechas = calculated
+		mode: import
+		source =
+				{
+				    ("Mensual", NAMEOF('Dim Calendario'[Mes-Año]), 0),
+				    ("Diarío", NAMEOF('Dim Calendario'[FechaDiaria]), 1)
+				}
+
+	annotation PBI_Id = b9db6d81b2a645688292201ea3ca934d
+

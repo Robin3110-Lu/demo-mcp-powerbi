@@ -1,0 +1,109 @@
+table mTitulos
+	lineageTag: 98f3b477-b27a-46cc-a5ea-2829a86d9582
+
+	measure 'Titulo Hoja 2' = "Claro por"&" "&SELECTCOLUMNS('ParámetroLeyenda','ParámetroLeyenda'[Parámetro])&", "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+		lineageTag: 31377068-5f53-46f9-a9b9-85a460610b8f
+
+	measure 'Titulo Hoja 4' = ```
+			"Claro por Departamento de"&"  "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])  
+			```
+		lineageTag: 79857ee4-491d-4392-ad44-8390d252cd6a
+
+	measure 'Titulo Mapa Hoja 4' = "Port-Neto"&" "&SELECTEDVALUE('Dim Calendario'[Mes-Año])&" - "&SELECTEDVALUE('Selector Real/Normal'[Tipo])
+		lineageTag: f29a5c8f-b5f0-4b5c-bd06-d92aff00deab
+
+	measure 'Titulo Matriz Hoja 4' = "Portabilidad por Departamento,"&" "&SELECTEDVALUE('Dim Calendario'[Mes-Año])&" - "&SELECTEDVALUE('Selector Real/Normal'[Tipo])
+		lineageTag: 52eaf4ca-3698-4bc4-8a03-074c5e7e009c
+
+	measure 'Titulo Multi KPIS' = ```
+			"Departamentos donde Claro pierde en el Neto,"&" "&SELECTEDVALUE('Dim Calendario'[Mes-Año])&", "&SELECTEDVALUE('Selector Real/Normal'[Tipo]) 
+			```
+		lineageTag: f986ea86-8909-4d4f-b086-bfb4eb6c7e3a
+
+	measure 'Titulo Hoja 6' = ```
+			"Port-In,"&" "&SELECTEDVALUE('Selector Real/Normal'[Tipo]) 
+			```
+		lineageTag: 1574c4c7-faab-45a7-b6e8-c2f929c793a0
+
+	measure 'Titulo Hoja 6 Anillo' = "Distribución por Macrocanal,"&" "&SELECTEDVALUE('Selector Real/Normal'[Tipo])
+		lineageTag: 97c3a0d6-407d-4a38-9b9c-6419b6dc35b6
+
+	measure 'Titulo Hoja Completa 6' = "Port-In Claro por Canal de"&" "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+		lineageTag: 88d07f15-3900-488d-9737-a4569bb677f3
+
+	measure 'Titulo Hoja Completa 7' = SELECTEDVALUE('Indicadores Port'[Indicador])&" Claro por "&SELECTCOLUMNS(ParametroHoja7,ParametroHoja7[ParametroHoja7])&" "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+		lineageTag: 25bb91b6-e52b-4c4e-b241-c88595e96486
+
+	measure 'Titulo Hoja 8' = ```
+			SELECTEDVALUE('Indicadores Port'[Indicador])&", Producto en Claro" 
+			```
+		lineageTag: e13d2050-f1bf-423b-addb-2342dbaf6a27
+
+	measure 'Titulo Macro Hoja 8' = ```
+			SELECTEDVALUE('Indicadores Port'[Indicador])&" Claro por Forma de Contratación"&", "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion]) 
+			```
+		lineageTag: e0ccf35f-bda7-4612-a26a-7877264c5ca9
+
+	measure 'Titulo Grafico Region Hoja 9' = ```
+			SELECTEDVALUE('Indicadores Port'[Indicador])&", Regional" 
+			```
+		lineageTag: 7169583c-abc1-49a1-a91c-c4150cda6199
+
+	measure 'Titulo Hoja 9 YTD' = SELECTEDVALUE('Indicadores Port'[Indicador])&", Nacional"
+		lineageTag: 519021df-5b46-429e-b4b1-744dbe3a6142
+
+	measure 'Titulo Tabla Hoja 9' = SELECTEDVALUE('Indicadores Port'[Indicador])&", "&SELECTEDVALUE('Selector Real/Normal'[Tipo])
+		lineageTag: d97ecd0e-8ae2-420e-bb7f-5bdabd6f28ca
+
+	measure 'Titulo Evolutivo Hoja 9' = ```
+			"Evolutivo "&SELECTEDVALUE('Indicadores Port'[Indicador])&" Nacional" 
+			```
+		lineageTag: 1e1c3dc7-6bed-4f33-842e-d7275492a913
+
+	measure 'Titulo Slicer Hoja 2' = ```
+			"Región por "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion]) 
+			```
+		lineageTag: b0cd8e44-25c6-42a5-b974-4ea73fb5443b
+
+	measure 'Titulo Hoja Evolutivo 8' = ```
+			"Forma de Contratación en la Competencia del "&SELECTEDVALUE('Indicadores Port'[Indicador])&" Claro" 
+			```
+		lineageTag: 23b86c52-7d82-4155-8657-3c889d79f792
+
+	measure 'Titulo Slicer Canal hoja 9' = ```
+			"Canal por "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion]) 
+			```
+		lineageTag: 62b07d29-7e32-4798-8619-abd14301ad1e
+
+	measure 'Titulo Hoja 7 Pie' = "Distribución por "&SELECTCOLUMNS(ParametroHoja7,ParametroHoja7[ParametroHoja7])
+		lineageTag: 924ab116-32e9-46bc-b540-ec5c5ab5ec3f
+
+	measure 'titulo hoja 7 evolutivo' = SELECTEDVALUE('Indicadores Port'[Indicador])&", "&'Selector Real/Normal'[Tipo Seleccionado]
+		lineageTag: f17e34b4-9d9f-48b0-a55c-c3335d83d7bf
+
+	measure SubTituloHoja7 = "YTD 2025 "&SELECTEDVALUE('Indicadores Port'[Indicador])&" por "&SELECTCOLUMNS(ParametroHoja7,ParametroHoja7[ParametroHoja7])
+		lineageTag: 9c4c9345-1e89-479f-b74b-8befad8e62f3
+
+	measure 'Titulo Macro Hoja 10' = ```
+			SELECTEDVALUE('Indicadores Port'[Indicador])&", Comparativo Meses" 
+			```
+		lineageTag: 1ca0fe13-089b-45f2-8d39-8559c09a47da
+
+	measure 'Titulo Hoja 10 Evolutivo' = "Comparativo "&SELECTCOLUMNS(ParametroEjeHoja10,ParametroEjeHoja10[ParametroEjeHoja10])& " de Portabilidad"&" - "&SELECTEDVALUE('Indicadores Port'[Indicador])
+		lineageTag: 45cffb8c-f044-4b51-8d3b-a3878c9f17ff
+
+	measure 'Titulo Tooiltip' = SELECTEDVALUE('Indicadores Port'[Indicador])
+		lineageTag: a94d0dd0-9cef-4218-973e-dabc2d630dd8
+
+	partition mTitulos = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+

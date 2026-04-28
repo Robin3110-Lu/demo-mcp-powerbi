@@ -1,0 +1,402 @@
+table SelectorUbicacion
+	lineageTag: 4480b996-8d24-4650-920d-d77e282a9f98
+
+	measure 'Port Out Ubicacion' = ```
+			
+			
+			
+			 var vTipoSeleccionado = 
+			        SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+			
+			 var vDiaMinimo = MIN('Días'[Días])
+			 var vDiaMaximoSeleccionado = MAX('Días'[Días])
+			 var vDiaMaximo = IF(
+			                         ISFILTERED('Días'[Días]),vDiaMaximoSeleccionado,DAY(TODAY())-1)
+			
+			 
+			 VAR vGeneraciondelaSEC = CALCULATE([Port Out Final], REMOVEFILTERS('Dim Ubicacion'), TREATAS(VALUES('Dim Ubicacion'[DepartamentoID]),'Fact FlashPortabilidad'[DepartamentoSECID]))
+			 VAR vOrigenVenta = CALCULATE([Port Out Final],
+			                                REMOVEFILTERS('Dim Ubicacion'), TREATAS(VALUES('Dim Ubicacion'[DepartamentoID]),'Fact FlashPortabilidad'[DepartamentoOrigenID]),
+			                   --    USERELATIONSHIP('Dim Ubicacion'[DepartamentoID],'Fact FlashPortabilidad'[DepartamentoOrigenID]),
+			                       'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo
+			                       )
+			 VAR vFinalizacionVenta =  CALCULATE([Port Out Final],
+			                            REMOVEFILTERS('Dim Ubicacion'), TREATAS(VALUES('Dim Ubicacion'[DepartamentoID]),'Fact FlashPortabilidad'[DepartamentoFinalizacionID]), 
+			                       -- USERELATIONSHIP('Dim Ubicacion'[DepartamentoID],'Fact FlashPortabilidad'[DepartamentoFinalizacionID]),
+			                        'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo
+			                       )
+			                    
+			                        
+			                    
+			                        
+			
+			
+			return 
+			    // Generacion de la SEC usa la fecha al día
+			    SWITCH(true(),
+			        vTipoSeleccionado ="Generacion de la SEC",vGeneraciondelaSEC,
+			        vTipoSeleccionado ="Origen de la Venta",vOrigenVenta,
+			        vTipoSeleccionado ="Finalización de la Venta",vFinalizacionVenta,
+			
+			                        
+			                         blank()) 
+			```
+		lineageTag: 1ba78759-86ea-49de-9897-53f600669854
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port In Ubicacion' = ```
+			
+			
+			
+			 var vTipoSeleccionado = 
+			        SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+			
+			 var vDiaMinimo = MIN('Días'[Días])
+			 var vDiaMaximoSeleccionado = MAX('Días'[Días])
+			 var vDiaMaximo = IF(
+			                         ISFILTERED('Días'[Días]),vDiaMaximoSeleccionado,DAY(TODAY())-1)
+			
+			 
+			 VAR vGeneraciondelaSEC = CALCULATE([Port In Final], REMOVEFILTERS('Dim Ubicacion'), TREATAS(VALUES('Dim Ubicacion'[DepartamentoID]),'Fact FlashPortabilidad'[DepartamentoSECID]))
+			 VAR vOrigenVenta = CALCULATE([Port In Final],
+			                                REMOVEFILTERS('Dim Ubicacion'), TREATAS(VALUES('Dim Ubicacion'[DepartamentoID]),'Fact FlashPortabilidad'[DepartamentoOrigenID]),
+			                   --    USERELATIONSHIP('Dim Ubicacion'[DepartamentoID],'Fact FlashPortabilidad'[DepartamentoOrigenID]),
+			                       'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo
+			                       )
+			 VAR vFinalizacionVenta =  CALCULATE([Port In Final],
+			                            REMOVEFILTERS('Dim Ubicacion'), TREATAS(VALUES('Dim Ubicacion'[DepartamentoID]),'Fact FlashPortabilidad'[DepartamentoFinalizacionID]), 
+			                       -- USERELATIONSHIP('Dim Ubicacion'[DepartamentoID],'Fact FlashPortabilidad'[DepartamentoFinalizacionID]),
+			                        'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo
+			                       )
+			                    
+			                        
+			
+			
+			return 
+			    // Generacion de la SEC usa la fecha al día
+			    SWITCH(true(),
+			        vTipoSeleccionado ="Generacion de la SEC",vGeneraciondelaSEC,
+			        vTipoSeleccionado ="Origen de la Venta",vOrigenVenta,
+			        vTipoSeleccionado ="Finalización de la Venta",vFinalizacionVenta,
+			
+			                        
+			                         blank()) 
+			```
+		formatString: #,0
+		lineageTag: 7520b31b-e43a-4ed1-8e35-edacd381ef02
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Port Neto Ubicacion' = ```
+			[Port In Ubicacion]-[Port Out Ubicacion] 
+			```
+		formatString: #,0
+		lineageTag: 303d0428-25f5-410e-8dff-32b6f76156b7
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Ratio Port-In/Port-Out' = DIVIDE([Port In Ubicacion],[Port Out Ubicacion],0)
+		formatString: 0.00
+		lineageTag: 0bfe0148-4c6c-4be0-bf10-37442a3889bc
+
+	measure 'Port Out Negativo Ubicacion' = ```
+			[Port Out Ubicacion]*-1 
+			```
+		lineageTag: 67f3640e-f1cd-4d86-b41b-b05c275877cd
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port In Canal-Ubicacion' = ```
+			
+			
+			
+			 var vTipoSeleccionado = 
+			        SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+			
+			 var vDiaMinimo = MIN('Días'[Días])
+			 var vDiaMaximoSeleccionado = MAX('Días'[Días])
+			 var vDiaMaximo = IF(
+			                         ISFILTERED('Días'[Días]),vDiaMaximoSeleccionado,DAY(TODAY())-1)
+			 VAR vGeneraciondelaSEC =   CALCULATE([Port In Final], 
+			                            REMOVEFILTERS('Dim Canal'), TREATAS(VALUES('Dim Canal'[SubCanalID]),'Fact FlashPortabilidad'[SubCanalSECID]),
+			                        'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo)
+			  VAR vOrigenVenta = CALCULATE([Port In Final],
+			                       REMOVEFILTERS('Dim Canal'), TREATAS(VALUES('Dim Canal'[SubCanalID]),'Fact FlashPortabilidad'[SubCanalOrigenID]),
+			                       'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo
+			                       )
+			   VAR vFinalizacionVenta =  CALCULATE([Port In Final],
+			                        REMOVEFILTERS('Dim Canal'), TREATAS(VALUES('Dim Canal'[SubCanalID]),'Fact FlashPortabilidad'[SubCanalActivacionID]),
+			                        'Días'[Días]>=vDiaMinimo,
+			                       'Días'[Días]<= vDiaMaximo
+			                        
+			                        )
+			     
+			
+			
+			
+			return 
+			 
+			
+			    
+			    SWITCH(true(),
+			        vTipoSeleccionado ="Generacion de la SEC",vGeneraciondelaSEC,
+			        vTipoSeleccionado ="Origen de la Venta",vOrigenVenta,
+			        vTipoSeleccionado ="Finalización de la Venta",vFinalizacionVenta,
+			
+			                        
+			                         blank()) 
+			```
+		formatString: #,0
+		lineageTag: 699d073d-2905-4981-84d2-b21ce61e544a
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Ventas por Día Dinamico' = ```
+			
+			
+			 var vMesesSeleccionados = VALUES('Dim Calendario'[Mes-Año])
+			var vDiaActual = SELECTEDVALUE('Dim Calendario'[Dia])  
+			
+			var vSemanal = VALUES('Dim Calendario'[SemanaEstandar])
+			
+			var vPeriodo = SELECTCOLUMNS(ParametroEjeHoja10,ParametroEjeHoja10[ParametroEjeHoja10])
+			
+			var vSelector = if(not ISFILTERED('Dim Calendario'[Mes-Año]),MAX('Dim Calendario'[Mes-Año]),vMesesSeleccionados)
+			
+			
+			        
+			return   
+			
+			        SWITCH(true(),vPeriodo="Semanal",CALCULATE(
+			            [Port-Dinamico],KEEPFILTERS(
+			                            FILTER('Dim Calendario','Dim Calendario'[Mes-Año] in vMesesSeleccionados
+			                             && 'Dim Calendario'[SemanaEstandar] = vSemanal))),
+			                            
+			                         vPeriodo="Diarío",
+			        CALCULATE(
+			            [Port-Dinamico],KEEPFILTERS(
+			                            FILTER('Dim Calendario','Dim Calendario'[Mes-Año] in vMesesSeleccionados && 'Dim Calendario'[Dia] = vDiaActual))))
+			
+			```
+		formatString: #,0
+		lineageTag: bf4e974c-0862-4201-9c3f-4417af62aa3c
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure Prueba = CALCULATE([Port In Ubicacion],FILTER(ALL('Dim Calendario'),'Dim Calendario'[Date] >=TODAY()-7*12 && 'Dim Calendario'[Date]<=TODAY()))
+		lineageTag: 8911eac4-c050-4f4a-ae07-f6e4426ed435
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Variación In' = ```
+			
+			
+			VAR vActual =CALCULATE([Port-Dinamico], 'Indicadores Port'[Indicador] = "Port-In")
+			VAR vPasadoSemana = [Port Semana Anterior (Año-Semana)]
+			RETURN
+			IF(
+			    ISBLANK(vPasadoSemana) || vPasadoSemana = 0,
+			    BLANK(),
+			    DIVIDE(vActual - vPasadoSemana, vPasadoSemana)
+			)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: fc5b6ddc-c66d-4156-a0af-1d6bd2077c49
+
+	measure 'Variación Out (Año-Semana)' = ```
+			
+			VAR vActual =CALCULATE([Port-Dinamico], 'Indicadores Port'[Indicador] = "Port-Out")
+			VAR vPasadoSemana = [Port Semana Anterior (Año-Semana)]
+			RETURN
+			IF(
+			    ISBLANK(vPasadoSemana) || vPasadoSemana = 0,
+			    BLANK(),
+			    DIVIDE(vActual - vPasadoSemana, vPasadoSemana)
+			)
+			
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 369ed278-fb6d-41b5-ab92-cdfd780a8e49
+
+	measure 'Variación Out Prueba' = ```
+			
+			 
+			 var vActual = CALCULATE([Ventas por Día Dinamico],'Indicadores Port'[Indicador]="Port-Out")
+			
+			 var vPasadoSemana = CALCULATE([Ventas por Día Dinamico],DATEADD('Dim Calendario'[Date],-7,DAY),'Indicadores Port'[Indicador]="Port-Out")
+			 
+			 RETURN
+			        if(not ISFILTERED('Dim Calendario'[Mes-Año]),CALCULATE(DIVIDE((vActual-vPasadoSemana),vPasadoSemana),'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice]))
+			        ,DIVIDE((vActual-vPasadoSemana),vPasadoSemana))
+			```
+		lineageTag: db4b8c27-c71a-4114-93bb-3704ce8eec3b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port Semana Anterior (Año-Semana)' = ```
+			
+			VAR vCurYear = SELECTEDVALUE('Dim Calendario'[Año])
+			VAR vCurWeek = SELECTEDVALUE('Dim Calendario'[SemanaAño])  // usa la columna que corresponda
+			// Si no hay contexto (por ejemplo en card), toma MAX en visual
+			VAR vCurYearSafe = IF(ISBLANK(vCurYear), MAX('Dim Calendario'[Año]), vCurYear)
+			VAR vCurWeekSafe = IF(ISBLANK(vCurWeek), MAX('Dim Calendario'[SemanaAño]), vCurWeek)
+			
+			// Determinar semana anterior y año anterior (considera 52/53 semanas)
+			VAR vPrevYear =
+			    IF(vCurWeekSafe = 1, vCurYearSafe - 1, vCurYearSafe)
+			VAR // detectar si año anterior tiene 53 semanas
+			    vMaxWeekPrevYear =
+			        CALCULATE(
+			            MAX('Dim Calendario'[SemanaAño]),
+			            ALL('Dim Calendario'),
+			            'Dim Calendario'[Año] = vCurYearSafe - 1
+			        )
+			VAR vPrevWeek =
+			    IF(
+			        vCurWeekSafe = 1,
+			        IF(vMaxWeekPrevYear = 53, 53, 52),
+			        vCurWeekSafe - 1
+			    )
+			
+			RETURN
+			CALCULATE(
+			    [Port-Dinamico],
+			    FILTER(
+			        ALL('Dim Calendario'),
+			        'Dim Calendario'[Año] = vPrevYear &&
+			        'Dim Calendario'[SemanaAño] = vPrevWeek
+			    )
+			)
+			
+			```
+		formatString: 0
+		lineageTag: 906295a2-c85c-4439-9bb0-7dae6fe1ec89
+
+	measure 'Port-In Mes Actual rEFACT' = ```
+			
+			 
+			 var vHayFiltro = ISFILTERED('Dim Calendario'[Mes-Año])
+			 var vInicio = TODAY()-7*12
+			 var vFin = TODAY()
+			 RETURN
+			
+			 if(vHayFiltro,CALCULATE([Port In Ubicacion],'Dim Calendario'[Mes-Año]=SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Port In Ubicacion],FILTER(ALL('Dim Calendario'),'Dim Calendario'[Date] > vInicio && 'Dim Calendario'[Date]<=vFin)))
+			
+			
+			
+			```
+		lineageTag: 8f2c643b-0b5a-400d-886f-82c2e5b0ffc6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port In Ubicacion RLS' =
+			
+			VAR vTipo =
+			    SELECTEDVALUE ( SelectorUbicacion[TipoUbicacion] )
+			
+			VAR vDeptosVisibles =
+			    VALUES ( 'Dim Ubicacion'[DepartamentoID] )
+			
+			VAR vDiaMin =
+			    MIN ( 'Dim Calendario'[Dia] )
+			
+			VAR vDiaMaxSel =
+			    MAX ( 'Dim Calendario'[Dia] )
+			
+			VAR vDiaMax =
+			    IF (
+			        ISFILTERED ( 'Dim Calendario'[Dia] ),
+			        vDiaMaxSel,
+			        DAY ( TODAY () ) - 1
+			    )
+			
+			-------------------------------------------------------------
+			-- GENERACIÓN SEC → DepartamentoSECID
+			-------------------------------------------------------------
+			VAR vSEC =
+			    CALCULATE (
+			        [Port In Final],
+			        KEEPFILTERS (
+			            'Fact FlashPortabilidad'[DepartamentoSECID] IN vDeptosVisibles
+			        ),
+			        'Dim Calendario'[Dia] = vDiaMax
+			    )
+			
+			-------------------------------------------------------------
+			-- ORIGEN → DepartamentoOrigenID
+			-------------------------------------------------------------
+			VAR vOrigen =
+			    CALCULATE (
+			        [Port In Final],
+			        KEEPFILTERS (
+			            'Fact FlashPortabilidad'[DepartamentoOrigenID] IN vDeptosVisibles
+			        ),
+			        'Dim Calendario'[Dia] >= vDiaMin,
+			        'Dim Calendario'[Dia] <= vDiaMax
+			    )
+			
+			-------------------------------------------------------------
+			-- FINALIZACIÓN → DepartamentoFinalizacionID
+			-------------------------------------------------------------
+			VAR vFinalizacion =
+			    CALCULATE (
+			        [Port In Final],
+			        KEEPFILTERS (
+			            'Fact FlashPortabilidad'[DepartamentoFinalizacionID] IN vDeptosVisibles
+			        ),
+			        'Dim Calendario'[Dia] >= vDiaMin,
+			        'Dim Calendario'[Dia] <= vDiaMax
+			    )
+			
+			RETURN
+			SWITCH (
+			    TRUE(),
+			    vTipo = "Generacion de la SEC", vSEC,
+			    vTipo = "Origen de la Venta", vOrigen,
+			    vTipo = "Finalizacion de la Venta", vFinalizacion,
+			    BLANK()
+			)
+		formatString: #,0
+		lineageTag: d7efeb2c-a776-4e35-8f8b-b1997e573354
+
+	column TipoUbicacion
+		lineageTag: a2b2f5b7-35ec-45ab-93ad-ff2c3b91ccf4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [TipoUbicacion]
+		sortByColumn: Orden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Orden
+		formatString: 0
+		lineageTag: afe53c15-172b-44b0-80c9-8b8c29ca5cda
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Orden]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition SelectorUbicacion = calculated
+		mode: import
+		source =
+				DATATABLE("TipoUbicacion",STRING,
+				    "Orden",INTEGER,
+				{
+				    {"Generacion de la SEC",1},
+				    {"Origen de la Venta",2},
+				    {"Finalización de la Venta",3}
+				
+				
+				})
+
+	annotation PBI_Id = 91f32f3e87c24943b15e699ba21c439f
+

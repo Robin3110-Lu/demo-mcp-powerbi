@@ -1,0 +1,112 @@
+table 'Indicadores Port'
+	lineageTag: 65d7cec3-3b73-4f14-9012-6780cbe75464
+
+	measure Port-Dinamico = ```
+			
+			
+			Var vIndicadorSeleccionado= VALUES('Indicadores Port'[Indicador])
+			var vResultado=
+			        SUMX(vIndicadorSeleccionado,
+			            SWITCH(TRUE(),
+			            'Indicadores Port'[Indicador] ="Port-In", [Port In Ubicacion],
+			            'Indicadores Port'[Indicador]= "Port-Out", [Port Out Ubicacion],
+			            'Indicadores Port'[Indicador] ="Port-Neto", [Port Neto Ubicacion],
+			            'Indicadores Port'[Indicador] ="Port-In Canal-Ubicacion",[Port In Canal-Ubicacion],
+			            'Indicadores Port'[Indicador] ="Ratio Port-In/Port-Out",[Ratio Port-In/Port-Out],
+			
+			            BLANK()))
+			RETURN
+			vResultado
+			
+			```
+		formatString: #,0
+		lineageTag: 0a9dc042-8a6c-42c9-8aeb-120b79ecae32
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Port-Dinamico-No Real' = CALCULATE([Port-Dinamico],'Selector Real/Normal'[Tipo]="Normal")-CALCULATE([Port-Dinamico],'Selector Real/Normal'[Tipo]="Real")
+		lineageTag: 78e98be3-616d-481d-b39f-5bbc0ab87d7f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-Dinamico Normal' = CALCULATE([Port-Dinamico],'Selector Real/Normal'[Tipo]="Normal")
+		lineageTag: 06a77bdc-e37b-492e-9ed7-21b2f6c1fb2d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-Dinamico Real' = CALCULATE([Port-Dinamico],'Selector Real/Normal'[Tipo]="Real")
+		lineageTag: d5e2374f-bf71-4216-abe9-a8e83329144d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'PortDinamico Real/Normal' = DIVIDE([Port-Dinamico Real],[Port-Dinamico Normal])
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 99dbb62d-9197-48af-a9a7-acfdbbb57bf8
+
+	measure 'YTD 2024 Dinamico' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			  IF(not ISFILTERED('Dim Calendario'[Mes-Año]),CALCULATE(
+			        [Port-Dinamico],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2024)),CALCULATE(
+			       [Port-Dinamico],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2024 && 'Dim Calendario'[Mes Numero]<=vMesSel)))
+			      
+			```
+		formatString: #,0
+		lineageTag: dff1f856-6d32-4d0d-a4fe-458a9723ca8c
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'YTD 2025 Dinamico' = ```
+			
+			
+			 var vMesAnoSel = SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			 var vMesSel = 
+			        CALCULATE(max('Dim Calendario'[Mes Numero]),'Dim Calendario'[Mes-Año]=vMesAnoSel)
+			return
+			  IF(not ISFILTERED('Dim Calendario'[Mes-Año]),CALCULATE(
+			        [Port-Dinamico],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2025)),CALCULATE(
+			       [Port-Dinamico],FILTER(all('Dim Calendario'),'Dim Calendario'[Año]=2025 && 'Dim Calendario'[Mes Numero]<=vMesSel)))
+			```
+		formatString: #,0
+		lineageTag: b865189f-4183-4aee-82f4-6ab17ea57926
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	column Indicador
+		lineageTag: 3d436c81-41b1-4c9f-aa06-a7c6e88f208d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Indicador]
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoDato = ```
+			SWITCH(TRUE(),'Indicadores Port'[Indicador]="Ratio Port-In/Port-Out","Porcentaje","Cantidad") 
+			```
+		lineageTag: 5a698167-63a9-4459-bf87-35b912a398cf
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Indicadores Port' = calculated
+		mode: import
+		source = ```
+				DATATABLE("Indicador",STRING,
+				{
+				    {"Port-In"},
+				    {"Port-Out"},
+				    {"Port-Neto"},
+				    {"Port-In Canal-Ubicacion"},
+				    {"Ratio Port-In/Port-Out"}
+				
+				
+				})
+				
+				```
+
+	annotation PBI_Id = 7205fd1014b140d38e780c6970fc2d5d
+

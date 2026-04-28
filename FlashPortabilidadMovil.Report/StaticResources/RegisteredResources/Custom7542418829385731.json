@@ -1,0 +1,54 @@
+{
+  "name": "Custom",
+  "textClasses": {
+    "label": {
+      "color": "#080808",
+      "fontFace": "Tahoma",
+      "fontSize": 10
+    },
+    "callout": {
+      "fontFace": "Tahoma",
+      "fontSize": 10
+    },
+    "title": {
+      "fontFace": "Tahoma",
+      "fontSize": 10
+    },
+    "header": {
+      "fontFace": "Tahoma",
+      "fontSize": 8
+    }
+  },
+  "bad": "#F93F17",
+  "neutral": "#FFCF02",
+  "good": "#46C646",
+  "minimum": "#FCFDF3",
+  "center": "#FFCF02",
+  "maximum": "#F93F17",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "border": [
+          {
+            "color": {
+              "solid": {
+                "color": "#D5D4D4"
+              }
+            },
+            "show": true,
+            "radius": 10
+          }
+        ]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [
+          {
+            "transparency": 0
+          }
+        ]
+      }
+    }
+  }
+}

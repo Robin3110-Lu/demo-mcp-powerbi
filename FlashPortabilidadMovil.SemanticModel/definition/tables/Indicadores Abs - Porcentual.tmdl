@@ -1,0 +1,66 @@
+table 'Indicadores Abs - Porcentual'
+	lineageTag: d2f92703-c0d9-43e7-b6af-62de3d1f5072
+
+	measure 'Indicador Seleccionado' = SELECTEDVALUE('Indicadores Abs - Porcentual'[TipoIndicador])
+		lineageTag: b58e4775-8662-4bb4-b86d-d62da358ac58
+
+	measure 'Port Out MoM - %Mom' = ```
+			
+			
+			 SWITCH(
+			
+			    'Indicadores Abs - Porcentual'[Indicador Seleccionado],
+			    "Variación Absoluta",[MoM Port-Out],
+			    "Variación Porcentual",[%MoM Port-Out])
+			```
+		lineageTag: ff3ec333-3359-4401-8d4c-385837904e74
+
+		formatStringDefinition = SWITCH(SELECTEDVALUE('Indicadores Abs - Porcentual'[TipoIndicador]),"Variación Absoluta","#,0","Variación Porcentual","0.0%")
+
+	measure 'Port In MoM - %Mom' = ```
+			
+			
+			 SWITCH(
+			
+			    'Indicadores Abs - Porcentual'[Indicador Seleccionado],
+			    "Variación Absoluta",[MoM Port-In],
+			    "Variación Porcentual",[%MoM Port-In])
+			```
+		lineageTag: 19ab19b2-7438-4863-a39a-777c2ba5b6c7
+
+		formatStringDefinition = SWITCH(SELECTEDVALUE('Indicadores Abs - Porcentual'[TipoIndicador]),"Variación Absoluta","#,0","Variación Porcentual","0.0%")
+
+	measure 'Port Neto MoM - %Mom' = ```
+			
+			
+			 SWITCH(
+			
+			    'Indicadores Abs - Porcentual'[Indicador Seleccionado],
+			    "Variación Absoluta",[MoM Port-Neto],
+			    "Variación Porcentual",[%MoM Port-Neto])
+			```
+		lineageTag: c4098da1-2c95-4f29-a9d2-e12b71f3ae57
+
+		formatStringDefinition = SWITCH(SELECTEDVALUE('Indicadores Abs - Porcentual'[TipoIndicador]),"Variación Absoluta","#,0","Variación Porcentual","0.0%")
+
+	column TipoIndicador
+		lineageTag: db41e1be-2459-4482-8b0e-80de4fe6feae
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [TipoIndicador]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Indicadores Abs - Porcentual' = calculated
+		mode: import
+		source =
+				DATATABLE("TipoIndicador",STRING,
+				{
+				    {"Variación Absoluta"},
+				    {"Variación Porcentual"}
+				
+				
+				})
+
+	annotation PBI_Id = c3261b964d43454482a4e5bc067f1c04
+

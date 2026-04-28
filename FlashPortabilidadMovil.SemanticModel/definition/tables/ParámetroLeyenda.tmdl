@@ -1,0 +1,51 @@
+table ParámetroLeyenda
+	lineageTag: 92943c9d-a3d8-4539-acba-636513c2bf26
+
+	column Parámetro
+		lineageTag: 36d150ac-8301-43a6-8eb3-cb658f289662
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'Parámetro Orden'
+
+		relatedColumnDetails
+			groupByColumn: 'Parámetro Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parámetro Campos'
+		isHidden
+		lineageTag: 33a76ad8-dbee-4a09-bac7-7b5403c9ff4c
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'Parámetro Orden'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Parámetro Orden'
+		isHidden
+		formatString: 0
+		lineageTag: dff9ca64-8c63-491a-9202-c18e47beb476
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParámetroLeyenda = calculated
+		mode: import
+		source =
+				{
+				    ("Forma de Contratación", NAMEOF('Dim Segmento'[FormaContratación]), 0),
+				    ("Región", NAMEOF('Dim Ubicacion'[Region]), 1),
+				    ("Operador Móvil", NAMEOF('Dim Operador'[Operador]), 2),
+				    ("Segmento de Mercado", NAMEOF('Dim Segmento'[DesSegmento]), 3),
+				    ("Departamento", NAMEOF('Dim Ubicacion'[Departamento]), 4)
+				}
+
+	annotation PBI_Id = 9ed3fe9ce26f478ab03d39fd3fa42f6f
+

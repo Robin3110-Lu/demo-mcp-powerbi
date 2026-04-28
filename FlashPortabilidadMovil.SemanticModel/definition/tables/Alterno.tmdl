@@ -1,0 +1,68 @@
+table Alterno
+	lineageTag: 81f06b65-8a7a-415c-9ae2-669ae80f9bb8
+
+	column Periodo
+		lineageTag: b91341ac-c1a5-49bd-9025-dc47f0465e3d
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Fecha Anterior[Periodo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Año'
+		lineageTag: bb53eebf-60aa-4b37-afd6-d1c7fcd7c8ba
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Fecha Anterior[Mes Año]
+		sortByColumn: Periodo
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año
+		lineageTag: 6be15067-d2b7-4ac1-9ab4-df31a11d3cad
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: Fecha Anterior[Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Indicador
+		formatString: 0
+		lineageTag: 07f99c24-78ce-4f8c-8315-dd674401f2b6
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Indicador]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Alterno = calculated
+		mode: import
+		source = ```
+				
+				var vTabla = ADDCOLUMNS(SUMMARIZECOLUMNS('Fecha Anterior'[Periodo], 'Fecha Anterior'[Mes Año], 'Fecha Anterior'[Año]), "Indicador", 1)
+				
+				var vTabla2 = SUMMARIZECOLUMNS(Auxiliar[PeriodoNum],Auxiliar[Periodo],Auxiliar[Año],Auxiliar[Indicador])
+				
+				//Mes Actual
+				var vTabla3 = ADDCOLUMNS(SUMMARIZECOLUMNS('Fecha Anterior'[Mes Año]),"Mes Actual","Mes Actual", "Indicador", 2,"Periodo","000001")
+				
+				//Mes Anio Anterior
+				var vTabla4 = ADDCOLUMNS(SUMMARIZECOLUMNS('Fecha Anterior'[Mes Año]),"Mes Anio Anterior","Mes Anio Anterior", "Indicador", 2,"Periodo","000000")
+				
+				RETURN
+				
+				FILTER(UNION(vTabla,vTabla2,
+				
+				//Mes Actual
+				SELECTCOLUMNS(vTabla3,"Periodo",[Periodo],"Mes Año",[Mes Año],"Mes Actual",[Mes Actual],"Indicador",[Indicador]),
+				
+				//Mes Anio Anterior
+				SELECTCOLUMNS(vTabla4,"Periodo",[Periodo],"Mes Año",[Mes Año],"Mes Anio Anterior",[Mes Anio Anterior],"Indicador",[Indicador])
+				
+				), AND([Periodo] <> BLANK(),[Mes Año] <> BLANK()))
+				
+				
+				```
+
+	annotation PBI_Id = 59f7a0dd422c40d38f9cf0a93c8bc39a
+

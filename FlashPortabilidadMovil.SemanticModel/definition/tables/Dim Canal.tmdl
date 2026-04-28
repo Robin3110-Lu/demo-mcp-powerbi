@@ -1,0 +1,69 @@
+table 'Dim Canal'
+	lineageTag: 18fbfcaf-c141-48f1-8efb-767649b792a2
+
+	column SubCanalID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 48749985-b9c1-4145-a58f-d4199b173674
+		summarizeBy: none
+		sourceColumn: SUBCANAL_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SubCanal
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 6a3c0add-468a-4a55-9251-4703d3772239
+		summarizeBy: none
+		sourceColumn: SUBCANAL
+		sortByColumn: SubCanalID
+
+		changedProperty = Name
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column MacroCanalID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 17de291e-0538-4f68-a2a6-250e2aa49a2b
+		summarizeBy: none
+		sourceColumn: MACROCANAL_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column MacroCanal
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 09423df5-c429-48ac-b417-cf4ee61577f1
+		summarizeBy: none
+		sourceColumn: MACROCANAL
+		sortByColumn: MacroCanalID
+
+		changedProperty = Name
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Dim Canal' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select *  from CLIINC.FPM_DIM_CANAL_PBI ", CreateNavigationProperties=false])
+				in
+				    Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

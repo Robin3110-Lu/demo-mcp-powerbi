@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.5.0/schema.json",
+  "name": "56edf090187c52ad9d07",
+  "position": {
+    "x": 10,
+    "y": 669,
+    "z": 3000,
+    "height": 51,
+    "width": 1180,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Nota. La ubicación por Origen de Venta y Finalización de Venta estará disponible al \"d - 1\", considerar esto al momento de evaluar la Portabilidad Neta. (*) Generación de la SEC: En función al PDV que origina la SEC, (*) Origen de Venta: En función a las reglas que determinan el punto que origina la venta, (*) Finalización de la Venta: En función a donde se entrega la venta, delivery o recojo.",
+                    "textStyle": {
+                      "fontSize": "8pt"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

@@ -1,0 +1,689 @@
+table mHajj
+	lineageTag: e2556704-7269-4f5e-bac9-bea70c986c2d
+
+	measure '12. Mostrar Medida Ventas' = ```
+			
+			var vAnio_evaluacion = SELECTEDVALUE(Alterno[Año])
+			
+			var vTotal = [20. Ventas por Periodo]
+			var vMesActual = [27. Ventas Mes Actual]
+			var vMesAnioAnterior = [29. Ventas Mes Año Anterior]
+			
+			var vMoM = [28. Dif. Ventas Mes Actual]
+			var vMoM_P = [31. %Var Ventas MA]
+			var vYoY = [30. Dif. Ventas SPLY]
+			var vYoY_P = [32. %Var Ventas SPLY]
+			
+			var vYTDActual = [23. Ventas YTD]
+			var vYTD_SPLY = [24. Ventas YTD SPLY]
+			var vYTD_ = [25. Dif. Ventas YTD]
+			
+			var vYTD_P = [26. %Var Ventas YTD]
+			
+			RETURN IF(SELECTEDVALUE(Alterno[Indicador]) = 1,
+			
+			            IF(NOT(ISBLANK(vTotal)),
+			                IF(ABS(vTotal)>1000000, FORMAT(vTotal, "#,,.0M","es-PE"),
+			                    IF(ABS(vTotal)>1000, FORMAT(vTotal,"#,##0,.00K","es-PE"), FORMAT(vTotal, "0","es-PE"))))
+			            ,
+			
+			            SWITCH(vAnio_evaluacion,
+			            
+			                "Mes Actual",
+			                SWITCH(SELECTEDVALUE(Alterno[Mes Año]),[Mes Etiqueta Actual],
+			                    IF(NOT(ISBLANK(vMesActual)), 
+			                        IF(ABS(vMesActual)>1000000, FORMAT(vMesActual, "#,,.0M","es-PE"),
+			                            IF(ABS(vMesActual)>1000, FORMAT(vMesActual,"#,##0,.00K","es-PE"), FORMAT(vMesActual, "0","es-PE")))),BLANK()),
+			
+			                "Mes Anio Anterior",
+			                    SWITCH(SELECTEDVALUE(Alterno[Mes Año]),[Mes Etiqueta Actual (Y-1)], 
+			                    IF(NOT(ISBLANK(vMesAnioAnterior)), 
+			                        IF(ABS(vMesAnioAnterior)>1000000, FORMAT(vMesAnioAnterior, "#,,.0M","es-PE"),
+			                            IF(ABS(vMesAnioAnterior)>1000, FORMAT(vMesAnioAnterior,"#,##0,.00K","es-PE"), FORMAT(vMesAnioAnterior, "0","es-PE")))),BLANK()),
+			
+			                "MoM",
+			                    IF(NOT(ISBLANK(vMoM)),
+			                        IF(ABS(vMoM)>1000000, FORMAT(vMoM, "#,,.0M","es-PE"),
+			                            IF(ABS(vMoM)>1000, FORMAT(vMoM,"#,##0,.00K","es-PE"), FORMAT(vMoM, "0","es-PE")))),
+			
+			                "MoM%", IF(NOT(ISBLANK(vMoM_P)),FORMAT(vMoM_P, "0.0%","es-PE")),
+			
+			                "YoY",
+			                    IF(NOT(ISBLANK(vYoY)), 
+			                        IF(ABS(vYoY)>1000000, FORMAT(vYoY, "#,,.0M","es-PE"),
+			                            IF(ABS(vYoY)>1000, FORMAT(vYoY,"#,##0,.00K","es-PE"), FORMAT(vYoY, "0","es-PE")))),
+			
+			                "YoY%", IF(NOT(ISBLANK(vYoY_P)),FORMAT(vYoY_P, "0.0%","es-PE")),
+			
+			                [Anio Pasado],
+			                    IF(NOT(ISBLANK(vYTD_SPLY)), 
+			                        IF(ABS(vYTD_SPLY)>1000000, FORMAT(vYTD_SPLY, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTD_SPLY)>1000, FORMAT(vYTD_SPLY,"#,##0,.00K","es-PE"), FORMAT(vYTD_SPLY, "0","es-PE")))),
+			
+			                [Anio Actual],
+			                    IF(NOT(ISBLANK(vYTDActual)), 
+			                        IF(ABS(vYTDActual)>1000000, FORMAT(vYTDActual, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTDActual)>1000, FORMAT(vYTDActual,"#,##0,.00K","es-PE"), FORMAT(vYTDActual, "0","es-PE")))),
+			                
+			                "YTD", 
+			                    IF(NOT(ISBLANK(vYTD_)), 
+			                        IF(ABS(vYTD_)>1000000, FORMAT(vYTD_, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTD_)>1000, FORMAT(vYTD_,"#,##0,.00K","es-PE"), FORMAT(vYTD_, "0","es-PE")))) ,
+			                
+			                "YTD%", IF(NOT(ISBLANK(vYTD_P)),FORMAT(vYTD_P, "0.0%","es-PE"))
+			            ))
+			```
+		lineageTag: e62986c7-b593-4132-8c86-c3e293398a18
+
+	measure '20. Ventas por Periodo' = ```
+			
+			var vInicio = [22. Periodo Inicio]
+			var vFin = [21. Periodo Fin]
+			var vPeriodo = CONVERT(SELECTEDVALUE(Alterno[Periodo]), INTEGER)
+			RETURN 
+			IF(AND(vPeriodo >= vInicio, vPeriodo < vFin),
+			            CALCULATE('Indicadores Port'[Port-Dinamico],
+			                        'Dim Calendario'[Año Mes] = vPeriodo, REMOVEFILTERS('Dim Calendario')))
+			```
+		lineageTag: 569c95da-d1b0-4240-adca-1f038921326d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '21. Periodo Fin' = ```
+			
+			// Definición de la variable que obtiene la fecha máxima en la columna Fecha de la tabla Calendario
+			VAR vFecha_maxima = MAX('Dim Calendario'[Date])
+			
+			// Definición de la variable que obtiene la fecha de fin de mes basada en la fecha máxima
+			VAR vFin_mes = EOMONTH(vFecha_maxima, 0)
+			
+			// Definición de la variable que obtiene la fecha actual máxima en la tabla Calendario, ignorando filtros
+			VAR vFecha_actual = MAXX(ALL('Dim Calendario'), 'Dim Calendario'[Date])
+			
+			// Retorno del valor formateado de Corte_Fin en el formato "yyyyMM" como un entero
+			RETURN 
+			CONVERT(FORMAT(vFin_mes, "YYYYMM"), INTEGER)
+			```
+		formatString: 0
+		lineageTag: fb70be44-c0e4-4749-a583-7e92d94bd795
+
+	measure '22. Periodo Inicio' =
+			
+			// Definición de la variable que obtiene la fecha máxima en la columna Fecha de la tabla Calendario
+			VAR vFecha_maxima = MAX('Dim Calendario'[date])
+			
+			// Definición de la variable Corte_Inicio que calcula el primer día del mes 13 meses atrás desde la fecha máxima
+			VAR vCorte_Inicio = EOMONTH(vFecha_maxima, -13) + 1
+			
+			// Retorno del valor formateado de Corte_Inicio en el formato "yyyyMM" como un entero
+			RETURN CONVERT(FORMAT(vCorte_Inicio, "yyyyMM"), INTEGER)
+		formatString: 0
+		lineageTag: 2b31e919-0937-4b2c-b6c6-dfe992741559
+
+	measure '23. Ventas YTD' =
+			
+			TOTALYTD('Indicadores Port'[Port-Dinamico], 'Dim Calendario'[Date])
+		lineageTag: 24560a2f-a55a-4f2f-bec3-bbfff2aa4e73
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '24. Ventas YTD SPLY' =
+			
+			TOTALYTD('Indicadores Port'[Port-Dinamico], SAMEPERIODLASTYEAR('Dim Calendario'[Date]))
+		lineageTag: b4660dd4-6cce-47ac-9b8a-3e7df7c6905b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '25. Dif. Ventas YTD' = [23. Ventas YTD]  - [24. Ventas YTD SPLY]
+		formatString: 0
+		lineageTag: 49d89713-644d-4690-9ff1-8c81f4d6d44b
+
+	measure '26. %Var Ventas YTD' = DIVIDE([25. Dif. Ventas YTD], [24. Ventas YTD SPLY])
+		lineageTag: c54b1aaa-4085-4246-abf0-4f85d4a60135
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '27. Ventas Mes Actual' = ```
+			
+			 TOTALMTD('Indicadores Port'[Port-Dinamico], 'Dim Calendario'[Date])
+			```
+		lineageTag: b86caf0e-1a9b-40c9-ae75-eec1aa2e84a6
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '28. Dif. Ventas Mes Actual' = ```
+			
+			var vVentasSPLY = 
+			CALCULATE('Indicadores Port'[Port-Dinamico], PREVIOUSMONTH('Dim Calendario'[Date]))
+			RETURN 
+			    [27. Ventas Mes Actual] - vVentasSPLY
+			```
+		lineageTag: a3465913-25dc-40f8-8aa1-be0c9023a73c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '29. Ventas Mes Año Anterior' = TOTALMTD('Indicadores Port'[Port-Dinamico], DATEADD('Dim Calendario'[Date],-1,YEAR))
+		lineageTag: 3af4425c-e66e-4583-bba0-b01ef25a18b7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '30. Dif. Ventas SPLY' =
+			
+			var vVentasSPLY = CALCULATE('Indicadores Port'[Port-Dinamico], SAMEPERIODLASTYEAR('Dim Calendario'[Date]))
+			return [27. Ventas Mes Actual] - vVentasSPLY
+		lineageTag: 24a84e05-d220-4bf4-9332-e98babfa7d4b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '31. %Var Ventas MA' = ```
+			
+			var vVentasSPLY = CALCULATE('Indicadores Port'[Port-Dinamico], PREVIOUSMONTH('Dim Calendario'[Date]))
+			RETURN DIVIDE([28. Dif. Ventas Mes Actual], vVentasSPLY,0) 
+			```
+		lineageTag: cfaf85bd-4b5d-4636-9ca2-34e59d602f61
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '32. %Var Ventas SPLY' =
+			
+			var vVentasSPLY = CALCULATE('Indicadores Port'[Port-Dinamico], SAMEPERIODLASTYEAR('Dim Calendario'[Date]))
+			RETURN DIVIDE([30. Dif. Ventas SPLY], vVentasSPLY,0)
+		lineageTag: e4d1e918-cfa1-467f-adae-d1bb3eaac30a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Anio Actual' =
+			
+			var vAnio = MAX('Dim Calendario'[Año])
+			RETURN CONVERT(vAnio, STRING)
+		lineageTag: 4d7f2e16-452a-4184-bf07-d0ef2559fbcc
+
+	measure 'Anio Pasado' =
+			
+			var vAnio = MAX('Dim Calendario'[Año])
+			RETURN CONVERT(vAnio - 1, STRING)
+		lineageTag: 45eed526-b24e-4133-901f-c7bf15bc3122
+
+	measure Color =
+			
+			var periodo_max = CALCULATE(MAX('Fecha Anterior'[Mes Año]), DATESMTD('Fecha Anterior'[Fecha]))
+			RETURN SWITCH(SELECTEDVALUE(Alterno[Año]),
+			            periodo_max, "#CFFDAF",
+			            "Mes Actual", "#CFFDAF",
+			            "MoM%", "#E2F0FB",
+			            "YoY%", "#E2F0FB",
+			            "YTD%", "#E2F0FB"
+			        )
+		lineageTag: 305a0624-c7ef-41de-9ee3-b5d7815e7007
+
+	measure 'Mes Etiqueta Actual' = ```
+			
+			var vFecha = EOMONTH(MAX('Dim Calendario'[Date]), -1) + 1
+			var vMesNumero = MONTH(vFecha)
+			var vAnio = YEAR(vFecha)
+			var vMesCorto = 
+			SWITCH(vMesNumero,
+			        1,"Ene",
+			        2,"Feb",
+			        3,"Mar",
+			        4,"Abr",
+			        5,"May",
+			        6,"Jun",
+			        7,"Jul",
+			        8,"Ago",
+			        9,"Sep",
+			        10,"Oct",
+			        11,"Nov",
+			        12,"Dic"
+			)
+			
+			var vMesAnioAnterior = LEFT(vMesCorto,3)&"-"&vAnio
+			
+			RETURN vMesAnioAnterior
+			```
+		lineageTag: 5886d1e6-d761-46c8-9b98-77d815c1f954
+
+	measure 'Mes Etiqueta Actual (Y-1)' = ```
+			
+			var vPeriodos = 13
+			var vFecha = EOMONTH(MAX('Dim Calendario'[Date]), -vPeriodos) + 1
+			var vMesNumero = MONTH(vFecha)
+			var vAnio = YEAR(vFecha)
+			var vMesCorto = 
+			SWITCH(vMesNumero,
+			        1,"Ene",
+			        2,"Feb",
+			        3,"Mar",
+			        4,"Abr",
+			        5,"May",
+			        6,"Jun",
+			        7,"Jul",
+			        8,"Ago",
+			        9,"Sep",
+			        10,"Oct",
+			        11,"Nov",
+			        12,"Dic"
+			)
+			
+			var vMesAnioAnterior = LEFT(vMesCorto,3)&"-"&vAnio
+			
+			RETURN vMesAnioAnterior
+			```
+		lineageTag: 99bfaa17-81da-411a-8551-9941b3f0a0e6
+
+	measure 'Mostrar Medida Formateado Hoja 8' = ```
+			
+			VAR vAnio_evaluacion = SELECTEDVALUE(Alterno[Año])
+			VAR vFormato = SELECTEDVALUE('Selector Real/Normal'[TipoDato])
+			VAR vIndicador = SELECTEDVALUE(Alterno[Indicador])
+			var vMesAnio = SELECTEDVALUE(Alterno[Mes Año])
+			
+			
+			VAR vTotal           = [20. Ventas por Periodo]
+			VAR vMesActual       = [27. Ventas Mes Actual]
+			VAR vMesAnioAnterior = [29. Ventas Mes Año Anterior]
+			VAR vMoM             = [28. Dif. Ventas Mes Actual]
+			VAR vMoM_P           = [31. %Var Ventas MA]
+			VAR vYoY             = [30. Dif. Ventas SPLY]
+			VAR vYoY_P           = [32. %Var Ventas SPLY]
+			VAR vYTDActual       = [23. Ventas YTD]
+			VAR vYTD_SPLY        = [24. Ventas YTD SPLY] 
+			VAR vYTD_            = [25. Dif. Ventas YTD]
+			VAR vYTD_P           = [26. %Var Ventas YTD]
+			
+			
+			-- Elegimos el valor a mostrar
+			VAR vValor =
+			    SWITCH(
+			        TRUE(),
+			        vIndicador = 1, vTotal,
+			        vAnio_evaluacion = "Mes Actual" && vMesAnio = [Mes Etiqueta Actual], vMesActual,
+			        vAnio_evaluacion = "Mes Anio Anterior" && vMesAnio = [Mes Etiqueta Actual (Y-1)], vMesAnioAnterior,
+			        vAnio_evaluacion = "MoM", vMoM,
+			        vAnio_evaluacion = "MoM%", vMoM_P,
+			        vAnio_evaluacion = "YoY", vYoY,
+			        vAnio_evaluacion = "YoY%", vYoY_P,
+			        vAnio_evaluacion = [Anio Pasado], vYTD_SPLY,
+			        vAnio_evaluacion = [Anio Actual], vYTDActual,
+			        vAnio_evaluacion = "YTD", vYTD_,
+			        vAnio_evaluacion = "YTD%", vYTD_P
+			    )
+			
+			
+			
+			VAR Formatear =
+			    SWITCH(
+			        TRUE(),
+			        vFormato = "Porcentaje", FORMAT(vValor, "0.0%", "es-PE"),
+			        vFormato = "Tiempo",
+			            VAR h = INT(vValor/ 60)
+			            VAR m = MOD(vValor, 60)
+			            RETURN FORMAT(h, "00") & ":" & FORMAT(m, "00"),
+			        FORMAT(vValor, "0", "es-PE")
+			    )
+			
+			VAR FormatearConSoles =
+			    SWITCH(
+			        TRUE(),
+			        vFormato = "Porcentaje", FORMAT(vValor, "0.0%", "es-PE"),
+			        vFormato = "Tiempo",
+			            VAR h = INT(vValor / 60)
+			            VAR m = MOD(vValor, 60)
+			            RETURN FORMAT(h, "00") & ":" & FORMAT(m, "00"),
+			        ABS(vValor) > 1000000,  FORMAT(vValor, "#,,.0M", "es-PE"),
+			        ABS(vValor) > 1000,  FORMAT(vValor, "#,##0,.00K", "es-PE"),
+			         FORMAT(vValor, "0", "es-PE")
+			    )
+			
+			
+			RETURN
+			IF(
+			    SELECTEDVALUE(Alterno[Indicador]) = 1,
+			    IF(NOT(ISBLANK(vTotal)),
+			        SUBSTITUTE(FormatearConSoles, "_", vTotal)
+			    ),
+			    SWITCH(
+			        vAnio_evaluacion,
+			
+			        "Mes Actual",
+			            SWITCH(
+			                SELECTEDVALUE(Alterno[Mes Año]), [Mes Etiqueta Actual],
+			                IF(NOT(ISBLANK(vMesActual)), SUBSTITUTE(FormatearConSoles, "_", vMesActual), BLANK())
+			            ),
+			
+			        "Mes Anio Anterior",
+			            SWITCH(
+			                SELECTEDVALUE(Alterno[Mes Año]), [Mes Etiqueta Actual (Y-1)],
+			                IF(NOT(ISBLANK(vMesAnioAnterior)), SUBSTITUTE(FormatearConSoles, "_", vMesAnioAnterior), BLANK())
+			            ),
+			
+			        "MoM",
+			            IF(NOT(ISBLANK(vMoM)), SUBSTITUTE(FormatearConSoles, "_", vMoM)),
+			
+			        "MoM%",
+			             IF(NOT(ISBLANK(vMoM_P)),FORMAT(vMoM_P, "0.0%","es-PE")),
+			
+			        "YoY",
+			            IF(NOT(ISBLANK(vYoY)), SUBSTITUTE(FormatearConSoles, "_", vYoY)),
+			
+			        "YoY%",
+			          IF(NOT(ISBLANK(vYoY_P)),FORMAT(vYoY_P, "0.0%","es-PE")),
+			
+			        [Anio Pasado],
+			            IF(NOT(ISBLANK(vYTD_SPLY)), SUBSTITUTE(FormatearConSoles, "_", vYTD_SPLY)),
+			
+			        [Anio Actual],
+			            IF(NOT(ISBLANK(vYTDActual)), SUBSTITUTE(FormatearConSoles, "_", vYTDActual)),
+			
+			        "YTD",
+			            IF(vFormato = "Porcentaje", FORMAT(vValor, "0.0%", "es-PE"),
+			            IF(NOT(ISBLANK(vYTD_)), 
+			                        IF(ABS(vYTD_)>1000000, FORMAT(vYTD_, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTD_)>1000, FORMAT(vYTD_,"#,##0,.00K","es-PE"), FORMAT(vYTD_, "0","es-PE"))))  ),
+			
+			        "YTD%",
+			           IF(NOT(ISBLANK(vYTD_P)),FORMAT(vYTD_P, "0.0%","es-PE"))
+			    )
+			)
+			
+			```
+		lineageTag: 8023566d-0365-4350-a12d-6b193416ac89
+
+	measure 'Mostrar Medida Formateado Hoja 9' = ```
+			
+			VAR vAnio_evaluacion = SELECTEDVALUE(Alterno[Año])
+			VAR vFormato = SELECTEDVALUE('Indicadores Port'[TipoDato])
+			VAR vIndicador = SELECTEDVALUE(Alterno[Indicador])
+			var vMesAnio = SELECTEDVALUE(Alterno[Mes Año])
+			
+			
+			VAR vTotal           = [20. Ventas por Periodo]
+			VAR vMesActual       = [27. Ventas Mes Actual]
+			VAR vMesAnioAnterior = [29. Ventas Mes Año Anterior]
+			VAR vMoM             = [28. Dif. Ventas Mes Actual]
+			VAR vMoM_P           = [31. %Var Ventas MA]
+			VAR vYoY             = [30. Dif. Ventas SPLY]
+			VAR vYoY_P           = [32. %Var Ventas SPLY]
+			VAR vYTDActual       = [23. Ventas YTD]
+			VAR vYTD_SPLY        = [24. Ventas YTD SPLY] 
+			VAR vYTD_            = [25. Dif. Ventas YTD]
+			VAR vYTD_P           = [26. %Var Ventas YTD]
+			
+			
+			-- Elegimos el valor a mostrar
+			VAR vValor =
+			    SWITCH(
+			        TRUE(),
+			        vIndicador = 1, vTotal,
+			        vAnio_evaluacion = "Mes Actual" && vMesAnio = [Mes Etiqueta Actual], vMesActual,
+			        vAnio_evaluacion = "Mes Anio Anterior" && vMesAnio = [Mes Etiqueta Actual (Y-1)], vMesAnioAnterior,
+			        vAnio_evaluacion = "MoM", vMoM,
+			        vAnio_evaluacion = "MoM%", vMoM_P,
+			        vAnio_evaluacion = "YoY", vYoY,
+			        vAnio_evaluacion = "YoY%", vYoY_P,
+			        vAnio_evaluacion = [Anio Pasado], vYTD_SPLY,
+			        vAnio_evaluacion = [Anio Actual], vYTDActual,
+			        vAnio_evaluacion = "YTD", vYTD_,
+			        vAnio_evaluacion = "YTD%", vYTD_P
+			    )
+			
+			
+			
+			VAR Formatear =
+			    SWITCH(
+			        TRUE(),
+			        vFormato = "Porcentaje", FORMAT(vValor, "0.0%", "es-PE"),
+			        vFormato = "Tiempo",
+			            VAR h = INT(vValor/ 60)
+			            VAR m = MOD(vValor, 60)
+			            RETURN FORMAT(h, "00") & ":" & FORMAT(m, "00"),
+			        FORMAT(vValor, "0", "es-PE")
+			    )
+			
+			VAR FormatearConSoles =
+			    SWITCH(
+			        TRUE(),
+			        vFormato = "Porcentaje", FORMAT(vValor, "0.0%", "es-PE"),
+			        vFormato = "Tiempo",
+			            VAR h = INT(vValor / 60)
+			            VAR m = MOD(vValor, 60)
+			            RETURN FORMAT(h, "00") & ":" & FORMAT(m, "00"),
+			        ABS(vValor) > 1000000,  FORMAT(vValor, "#,,.0M", "es-PE"),
+			        ABS(vValor) > 1000,  FORMAT(vValor, "#,##0,.00K", "es-PE"),
+			         FORMAT(vValor, "0", "es-PE")
+			    )
+			
+			
+			RETURN
+			IF(
+			    SELECTEDVALUE(Alterno[Indicador]) = 1,
+			    IF(NOT(ISBLANK(vTotal)),
+			        SUBSTITUTE(FormatearConSoles, "_", vTotal)
+			    ),
+			    SWITCH(
+			        vAnio_evaluacion,
+			
+			        "Mes Actual",
+			            SWITCH(
+			                SELECTEDVALUE(Alterno[Mes Año]), [Mes Etiqueta Actual],
+			                IF(NOT(ISBLANK(vMesActual)), SUBSTITUTE(FormatearConSoles, "_", vMesActual), BLANK())
+			            ),
+			
+			        "Mes Anio Anterior",
+			            SWITCH(
+			                SELECTEDVALUE(Alterno[Mes Año]), [Mes Etiqueta Actual (Y-1)],
+			                IF(NOT(ISBLANK(vMesAnioAnterior)), SUBSTITUTE(FormatearConSoles, "_", vMesAnioAnterior), BLANK())
+			            ),
+			
+			        "MoM",
+			            IF(NOT(ISBLANK(vMoM)), SUBSTITUTE(FormatearConSoles, "_", vMoM)),
+			
+			        "MoM%",
+			             IF(NOT(ISBLANK(vMoM_P)),FORMAT(vMoM_P, "0.0%","es-PE")),
+			
+			        "YoY",
+			            IF(NOT(ISBLANK(vYoY)), SUBSTITUTE(FormatearConSoles, "_", vYoY)),
+			
+			        "YoY%",
+			          IF(NOT(ISBLANK(vYoY_P)),FORMAT(vYoY_P, "0.0%","es-PE")),
+			
+			        [Anio Pasado],
+			            IF(NOT(ISBLANK(vYTD_SPLY)), SUBSTITUTE(FormatearConSoles, "_", vYTD_SPLY)),
+			
+			        [Anio Actual],
+			            IF(NOT(ISBLANK(vYTDActual)), SUBSTITUTE(FormatearConSoles, "_", vYTDActual)),
+			
+			        "YTD",
+			            IF(NOT(ISBLANK(vYTD_)), 
+			                        IF(ABS(vYTD_)>1000000, FORMAT(vYTD_, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTD_)>1000, FORMAT(vYTD_,"#,##0,.00K","es-PE"), FORMAT(vYTD_, "0","es-PE"))))  ,
+			
+			        "YTD%",
+			           IF(NOT(ISBLANK(vYTD_P)),FORMAT(vYTD_P, "0.0%","es-PE"))
+			    )
+			)
+			```
+		lineageTag: 0c761a78-2401-4582-bcf4-ea311c5be99d
+
+	measure 'Mostrar Medida Hajj Final Basica' = ```
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vSelectorVista = SELECTEDVALUE(Vista[Descripcion])
+			
+			return
+			if(vSelectorVista in{"Parcial","Ambos"},
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([12. Mostrar Medida Ventas],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([12. Mostrar Medida Ventas],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([12. Mostrar Medida Ventas],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])-1),CALCULATE([12. Mostrar Medida Ventas],'Dim Calendario'[Mes-Año]=vMesEscogido))) 
+			```
+		lineageTag: 735ab579-d24d-476e-9465-7ea82ea03451
+
+	measure 'Mostrar Medida Hajj Hoja 8 Final Basica' =
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vSelectorVista = SELECTEDVALUE(Vista[Descripcion])
+			var vMedidaFinal = if(vSelectorVista in{"Parcial","Ambos"},
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Mostrar Medida Formateado Hoja 8],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Mostrar Medida Formateado Hoja 8],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Mostrar Medida Formateado Hoja 8],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])-1),CALCULATE([Mostrar Medida Formateado Hoja 8],'Dim Calendario'[Mes-Año]=vMesEscogido)))
+			return
+			vMedidaFinal
+		lineageTag: cd820c7d-e62d-4270-aa39-4cc374e90dd8
+
+	measure 'Mostrar Medida Hajj Hoja 9 Final Basica' =
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vSelectorVista = SELECTEDVALUE(Vista[Descripcion])
+			
+			var vMedidaFinal = if(vSelectorVista in{"Parcial","Ambos"},
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Mostrar Medida Formateado Hoja 9],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Mostrar Medida Formateado Hoja 9],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Mostrar Medida Formateado Hoja 9],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])-1),CALCULATE([Mostrar Medida Formateado Hoja 9],'Dim Calendario'[Mes-Año]=vMesEscogido)))
+			return
+			
+			vMedidaFinal
+		lineageTag: f25f5a0f-4b44-435f-8f30-a06e525a3d1b
+
+	measure 'Color Base Rojo Fuente Positiva' = ```
+			
+			var vMoM = [28. Dif. Ventas Mes Actual]
+			var vMoM_P = [31. %Var Ventas MA]
+			var vYoY = [30. Dif. Ventas SPLY]
+			var vYoY_P = [32. %Var Ventas SPLY]
+			
+			var vYTDActual = [23. Ventas YTD]
+			var vYTD_SPLY = [24. Ventas YTD SPLY]
+			var vYTD_ = [25. Dif. Ventas YTD]
+			
+			var vYTD_P = [26. %Var Ventas YTD]
+			var vAno = SELECTEDVALUE(Alterno[Año])
+			
+			
+			RETURN
+			SWITCH(TRUE(),
+			        vMoM>0 && vAno = "MoM", "#FF0004",
+			        vMoM_P>0 && vAno = "MoM%","#FF0004",
+			        vYoY>0 && vAno = "YoY","#FF0004",
+			        vYoY_P>0 && vAno = "YoY%","#FF0004",
+			        vYTD_> 0&& vAno = "YTD","#FF0004",
+			        vYTD_P>0 && vAno = "YTD%","#FF0004", 
+			        blank())
+			```
+		lineageTag: 1c1b1b66-bd10-4815-bbef-1df8353dbd6c
+
+	measure 'Color Fuente Rojo Positivo Final' =
+			
+			var vMesEscogido= SELECTEDVALUE('Dim Calendario'[Mes-Año])
+			var vIndicador = SELECTEDVALUE('Indicadores Port'[Indicador])
+			return
+			if(vIndicador="Port-Out",
+			if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Color Base Rojo Fuente Positiva],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Color Base Rojo Fuente Positiva],'Dim Calendario'[Mes-Año]=vMesEscogido)),if(ISBLANK(SELECTEDVALUE('Dim Calendario'[Mes-Año])),CALCULATE([Color Base Rojo Fuente Negativa],'Dim Calendario'[Índice]=MAX('Dim Calendario'[Índice])),CALCULATE([Color Base Rojo Fuente Negativa],'Dim Calendario'[Mes-Año]=vMesEscogido)))
+		lineageTag: 3937fadb-d0a7-44cc-bbe8-04961f43d71b
+
+	measure 'Color Base Rojo Fuente Negativa' = ```
+			
+			var vMoM = [28. Dif. Ventas Mes Actual]
+			var vMoM_P = [31. %Var Ventas MA]
+			var vYoY = [30. Dif. Ventas SPLY]
+			var vYoY_P = [32. %Var Ventas SPLY]
+			
+			var vYTDActual = [23. Ventas YTD]
+			var vYTD_SPLY = [24. Ventas YTD SPLY]
+			var vYTD_ = [25. Dif. Ventas YTD]
+			
+			var vYTD_P = [26. %Var Ventas YTD]
+			var vAno = SELECTEDVALUE(Alterno[Año])
+			
+			
+			RETURN
+			SWITCH(TRUE(),
+			        vMoM<0 && vAno = "MoM", "#FF0004",
+			        vMoM_P<0 && vAno = "MoM%","#FF0004",
+			        vYoY<0 && vAno = "YoY","#FF0004",
+			        vYoY_P<0 && vAno = "YoY%","#FF0004",
+			        vYTD_<0&& vAno = "YTD","#FF0004",
+			        vYTD_P<0 && vAno = "YTD%","#FF0004", 
+			        blank())
+			```
+		lineageTag: 7f9e32f0-7b41-4aa5-9016-e4a5afb5674f
+
+	measure '12. Mostrar Medida Ventas Prueba Formato' = ```
+			
+			var vAnio_evaluacion = SELECTEDVALUE(Alterno[Año])
+			
+			var vTotal = [20. Ventas por Periodo]
+			var vMesActual = [27. Ventas Mes Actual]
+			var vMesAnioAnterior = [29. Ventas Mes Año Anterior]
+			
+			var vMoM = [28. Dif. Ventas Mes Actual]
+			var vMoM_P = [31. %Var Ventas MA]
+			var vYoY = [30. Dif. Ventas SPLY]
+			var vYoY_P = [32. %Var Ventas SPLY]
+			
+			var vYTDActual = [23. Ventas YTD]
+			var vYTD_SPLY = [24. Ventas YTD SPLY]
+			var vYTD_ = [25. Dif. Ventas YTD]
+			
+			var vYTD_P = [26. %Var Ventas YTD]
+			
+			RETURN IF(SELECTEDVALUE(Alterno[Indicador]) = 1,
+			
+			            IF(NOT(ISBLANK(vTotal)),
+			                IF(ABS(vTotal)>1000000, FORMAT(vTotal, "#,,.00","es-PE"),
+			                    IF(ABS(vTotal)>1000, FORMAT(vTotal,"#,##0,.000","es-PE"), FORMAT(vTotal, "0","es-PE"))))
+			            ,
+			
+			            SWITCH(vAnio_evaluacion,
+			            
+			                "Mes Actual",
+			                SWITCH(SELECTEDVALUE(Alterno[Mes Año]),[Mes Etiqueta Actual],
+			                    IF(NOT(ISBLANK(vMesActual)), 
+			                        IF(ABS(vMesActual)>1000000, FORMAT(vMesActual, "#,,.00","es-PE"),
+			                            IF(ABS(vMesActual)>1000, FORMAT(vMesActual,"#,##0,.000","es-PE"), FORMAT(vMesActual, "0","es-PE")))),BLANK()),
+			
+			                "Mes Anio Anterior",
+			                    SWITCH(SELECTEDVALUE(Alterno[Mes Año]),[Mes Etiqueta Actual (Y-1)], 
+			                    IF(NOT(ISBLANK(vMesAnioAnterior)), 
+			                        IF(ABS(vMesAnioAnterior)>1000000, FORMAT(vMesAnioAnterior, "#,,.000","es-PE"),
+			                            IF(ABS(vMesAnioAnterior)>1000, FORMAT(vMesAnioAnterior,"#,##0,.000","es-PE"), FORMAT(vMesAnioAnterior, "0","es-PE")))),BLANK()),
+			
+			                "MoM",
+			                    IF(NOT(ISBLANK(vMoM)),
+			                        IF(ABS(vMoM)>1000000, FORMAT(vMoM, "#,,.00","es-PE"),
+			                            IF(ABS(vMoM)>1000, FORMAT(vMoM,"#,##0,.000","es-PE"), FORMAT(vMoM, "0","es-PE")))),
+			
+			                "MoM%", IF(NOT(ISBLANK(vMoM_P)),FORMAT(vMoM_P, "0.0%","es-PE")),
+			
+			                "YoY",
+			                    IF(NOT(ISBLANK(vYoY)), 
+			                        IF(ABS(vYoY)>1000000, FORMAT(vYoY, "#,,.00","es-PE"),
+			                            IF(ABS(vYoY)>1000, FORMAT(vYoY,"#,##0,.000","es-PE"), FORMAT(vYoY, "0","es-PE")))),
+			
+			                "YoY%", IF(NOT(ISBLANK(vYoY_P)),FORMAT(vYoY_P, "0.0%","es-PE")),
+			
+			                [Anio Pasado],
+			                    IF(NOT(ISBLANK(vYTD_SPLY)), 
+			                        IF(ABS(vYTD_SPLY)>1000000, FORMAT(vYTD_SPLY, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTD_SPLY)>1000, FORMAT(vYTD_SPLY,"#,##0,.00K","es-PE"), FORMAT(vYTD_SPLY, "0","es-PE")))),
+			
+			                [Anio Actual],
+			                    IF(NOT(ISBLANK(vYTDActual)), 
+			                        IF(ABS(vYTDActual)>1000000, FORMAT(vYTDActual, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTDActual)>1000, FORMAT(vYTDActual,"#,##0,.00K","es-PE"), FORMAT(vYTDActual, "0","es-PE")))),
+			                
+			                "YTD", 
+			                    IF(NOT(ISBLANK(vYTD_)), 
+			                        IF(ABS(vYTD_)>1000000, FORMAT(vYTD_, "#,,.0M","es-PE"),
+			                            IF(ABS(vYTD_)>1000, FORMAT(vYTD_,"#,##0,.00K","es-PE"), FORMAT(vYTD_, "0","es-PE")))) ,
+			                
+			                "YTD%", IF(NOT(ISBLANK(vYTD_P)),FORMAT(vYTD_P, "0.0%","es-PE"))
+			            ))
+			```
+		lineageTag: fdae0df5-ad57-46b6-a5be-bedd99184d02
+
+	partition mHajj = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,42 @@
+relationship 43ce0a71-52d3-e7e4-d657-38720df100c9
+	fromColumn: 'Fact FlashPortabilidad'.Antiguedad
+	toColumn: 'Dim Antiguedad'.NumAntiguedad
+
+relationship ea36521f-a400-1822-8da8-f24ade2d5e25
+	fromColumn: 'Fact FlashPortabilidad'.RangoCFOferta
+	toColumn: 'Dim CF'.NumRango
+
+relationship 9df2d7e9-8877-0f8f-bce8-6f12eeb8ce37
+	fromColumn: 'Fact FlashPortabilidad'.OperadorCompetencia
+	toColumn: 'Dim Operador'.NumOperador
+
+relationship 70cab6cd-9b25-9dc9-bcf7-1bac14057a63
+	fromColumn: 'Fact FlashPortabilidad'.SubCanalOrigenID
+	toColumn: 'Dim Canal'.SubCanalID
+
+relationship 6e905f4e-f54d-773e-137c-4f7d82303754
+	fromColumn: 'Fact FlashPortabilidad'.RangoRecarga
+	toColumn: 'Dim Recarga'.RangoRecargaID
+
+relationship 3bfa80f7-d273-5c60-bd4a-0735bd37fb3d
+	fromColumn: 'Fact FlashPortabilidad'.SegmentoID
+	toColumn: 'Dim Segmento'.SegmentoID
+
+relationship 2d3a4221-6f6f-aefa-09aa-1db31ca50668
+	fromColumn: 'Fact FlashPortabilidad'.DepartamentoOrigenID
+	toColumn: 'Dim Ubicacion'.DepartamentoID
+
+relationship 97ac4e7a-6d7e-632f-e9e8-e17772e6e038
+	fromColumn: 'Fact FlashPortabilidad'.Fecha
+	toColumn: 'Dim Calendario'.Date
+
+relationship 2b72ae8b-8b8c-4c69-9ef7-fbd404107f2f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'Fecha Anterior'.Fecha
+	toColumn: LocalDateTable_2a5b1163-cd52-458c-a6b3-5bac1742866e.Date
+
+relationship 37358e30-8adf-49f9-aa97-3e1d8b7dda67
+	joinOnDateBehavior: datePartOnly
+	fromColumn: TablaActualización.'Ultima Fecha de Actualización'
+	toColumn: LocalDateTable_685b0a62-05c7-44de-a112-dc4a362d45a8.Date
+

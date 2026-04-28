@@ -1,0 +1,55 @@
+table 'Dim Recarga'
+	lineageTag: e04fc839-4ab0-4bc6-892d-02ebd6e03b31
+
+	column RangoRecargaID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: baf2fe73-188f-47ec-8bd2-19ae8edb8da8
+		summarizeBy: none
+		sourceColumn: RANGO_RECARGA_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RangoRecarga
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 2724e49d-49a3-4adc-9dbc-e66c1d29f411
+		summarizeBy: none
+		sourceColumn: RANGO_RECARGA
+		sortByColumn: OrdenRangoRecarga
+
+		changedProperty = SortByColumn
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrdenRangoRecarga
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 7209ad50-02ef-4a23-9c8c-026a222ab820
+		summarizeBy: none
+		sourceColumn: ORDEN_RANGO_RECARGA
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Dim Recarga' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select * from CLIINC.C27612_DIM_RECARGA ", CreateNavigationProperties=false])
+				in
+				    Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

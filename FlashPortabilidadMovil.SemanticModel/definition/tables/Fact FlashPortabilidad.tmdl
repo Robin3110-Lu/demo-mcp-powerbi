@@ -1,0 +1,365 @@
+table 'Fact FlashPortabilidad'
+	lineageTag: 737f9251-f038-46cc-9ee8-726fb52ace7f
+
+	refreshPolicy
+		policyType: basic
+		rollingWindowGranularity: month
+		rollingWindowPeriods: 63
+		incrementalGranularity: month
+		incrementalPeriods: 2
+		sourceExpression = ```
+			let
+			    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true]),
+			    CLIINC = Origen{[Schema="CLIINC"]}[Data],
+			    FPM_T_IND_PORTABILIDAD_PBI = CLIINC{[Name="FPM_T_IND_PORTABILIDAD_PBI"]}[Data],
+			   
+			    CambiarTipo= Table.TransformColumnTypes(FPM_T_IND_PORTABILIDAD_PBI,{{"FECHA",type datetime}}),
+			    #"Filas incremental" = Table.SelectRows(CambiarTipo, each [FECHA] > RangeStart and [FECHA] < RangeEnd),
+			    #"Filas ordenadas" = Table.Sort(#"Filas incremental",{{"FECHA", Order.Descending}})
+			in
+			    #"Filas ordenadas"
+			```
+
+	column Fecha
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: Date
+		lineageTag: 77035778-f498-483f-87c3-980fda19c788
+		summarizeBy: none
+		sourceColumn: FECHA
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column OperadorCompetencia
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: aa224678-6bb5-4c52-9d64-4c0377bade6d
+		summarizeBy: none
+		sourceColumn: OPERADOR_COMPETENCIA
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DepartamentoFinalizacionID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 5e7f7f82-97f0-4408-928c-70d393ec9441
+		summarizeBy: count
+		sourceColumn: DEPARTAMENTO_FINALIZACION_ID
+
+		changedProperty = Name
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubCanalActivacion
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 91a2abfd-434d-4e83-ae32-b90bc30f6aa1
+		summarizeBy: none
+		sourceColumn: SUBCANAL_ACTIVACION
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubCanalOrigen
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 6b0dddcd-9236-447c-98aa-097a6f889ee8
+		summarizeBy: none
+		sourceColumn: SUBCANAL_ORIGEN
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubCanalSEC
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 3d966876-56d4-469c-8ce5-b6a1e83e9bb1
+		summarizeBy: none
+		sourceColumn: SUBCANAL_SEC
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartamentoOrigenID
+		dataType: int64
+		formatString: 0
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 1c0a9045-f3fb-485d-adcb-d50406203273
+		summarizeBy: none
+		sourceColumn: DEPARTAMENTO_ORIGEN_ID
+
+		changedProperty = Name
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column DepartamentoSECID
+		dataType: int64
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 4d19c0b3-b2c6-459f-a5f0-3c87dfb0f7b7
+		summarizeBy: count
+		sourceColumn: DEPARTAMENTO_SEC_ID
+
+		changedProperty = Name
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column FormaContratacionID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 7a0b8212-0188-4037-af42-7308480aa1af
+		summarizeBy: count
+		sourceColumn: FORMA_CONTRATACION_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SegmentoID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: df390717-fa1b-4f84-88a6-025b18a74481
+		summarizeBy: none
+		sourceColumn: SEGMENTO_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Antiguedad
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 9498181e-3e86-44af-8cdd-c2de061c6c8a
+		summarizeBy: none
+		sourceColumn: ANTIGUEDAD
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RangoCFOferta
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 71519b17-68f2-4394-8b6f-f85942cad6cf
+		summarizeBy: none
+		sourceColumn: RANGO_CF_OFERTA
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column RangoRecarga
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 08a1bdd1-8c72-4149-9cc6-72da4793c2b1
+		summarizeBy: none
+		sourceColumn: RANGO_RECARGA
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CFPortIn
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 3c1a6f38-821f-4282-a8c4-c734ac9af30d
+		summarizeBy: sum
+		sourceColumn: CF_PORTIN
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LNPortIn
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 355e0f2a-f1ec-40df-8525-6762fcd628ee
+		summarizeBy: sum
+		sourceColumn: LN_PORTIN
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CFPortOut
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 8d85500e-4315-470e-b9db-ba57596a0b76
+		summarizeBy: sum
+		sourceColumn: CF_PORTOUT
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LNPortOut
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: d905cfb1-de9e-45bd-b22c-1e76b566d3fb
+		summarizeBy: sum
+		sourceColumn: LN_PORTOUT
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CFPortinReal
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 300a0a95-26d9-48fd-b5df-47986fab4b35
+		summarizeBy: sum
+		sourceColumn: CF_PORTIN_REAL
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LNPortInReal
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 47789367-f185-48eb-a336-e71486a765a0
+		summarizeBy: sum
+		sourceColumn: LN_PORTIN_REAL
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column CFPortOutReal
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 18bdfb17-1f3a-49c0-93ea-e842bd8e4024
+		summarizeBy: sum
+		sourceColumn: CF_PORTOUT_REAL
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LNPortOutReal
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 3233ad35-3ae7-4405-acee-c757a167a199
+		summarizeBy: sum
+		sourceColumn: LN_PORTOUT_REAL
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SubCanalOrigenID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 1aad35f3-4b7a-462a-ac1b-21536e5e9cb0
+		summarizeBy: none
+		sourceColumn: SUBCANAL_ORIGEN_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SubCanalActivacionID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 4437fb4e-2c73-4032-9c2d-eff89390078b
+		summarizeBy: count
+		sourceColumn: SUBCANAL_ACTIVACION_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column TipoID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 34e43253-a08c-4c09-a5fc-0aacbb0482e2
+		summarizeBy: count
+		sourceColumn: TIPO_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column SubCanalSECID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 7fcffb25-7eac-4143-97cc-fd2a4b7866be
+		summarizeBy: count
+		sourceColumn: SUBCANAL_SEC_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'Fact FlashPortabilidad' = m
+		mode: import
+		source = ```
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true]),
+				    CLIINC = Origen{[Schema="CLIINC"]}[Data],
+				    FPM_T_IND_PORTABILIDAD_PBI = CLIINC{[Name="FPM_T_IND_PORTABILIDAD_PBI"]}[Data],
+				   
+				    CambiarTipo= Table.TransformColumnTypes(FPM_T_IND_PORTABILIDAD_PBI,{{"FECHA",type datetime}}),
+				    #"Filas incremental" = Table.SelectRows(CambiarTipo, each [FECHA] > RangeStart and [FECHA] < RangeEnd),
+				    #"Filas ordenadas" = Table.Sort(#"Filas incremental",{{"FECHA", Order.Descending}})
+				in
+				    #"Filas ordenadas"
+				```
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_IsMQueryFoldable = True
+

@@ -1,0 +1,36 @@
+table 'Selector Real/Normal'
+	lineageTag: cc91a94a-b029-4bf6-9e1b-fa9db3c9a4f8
+
+	measure 'Tipo Seleccionado' = SELECTEDVALUE('Selector Real/Normal'[Tipo])
+		lineageTag: dee88c65-bd54-47ae-ae29-e57a905b4ef5
+
+	column Tipo
+		lineageTag: f6e0d206-ff50-44db-9ac3-575532bb058b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Tipo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column TipoDato = ```
+			if('Selector Real/Normal'[Tipo]="Real/Normal","Porcentaje","Cantidad") 
+			```
+		lineageTag: 87ba5fb8-be83-4274-a6ff-5f32f24939b1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Selector Real/Normal' = calculated
+		mode: import
+		source =
+				DATATABLE("Tipo",STRING,
+				{
+				    {"Normal"},
+				    {"Real"},
+				    {"Real/Normal"}
+				
+				
+				})
+
+	annotation PBI_Id = e684e9a710d740c897dfa78c343faaf9
+

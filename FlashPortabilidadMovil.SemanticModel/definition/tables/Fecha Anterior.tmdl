@@ -1,0 +1,97 @@
+table 'Fecha Anterior'
+	lineageTag: 1f35b377-2159-467c-b5be-6eff8f3c7386
+
+	column Fecha
+		lineageTag: b14f07dc-970d-46cd-bd1d-0589341b17b7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Fecha]
+
+		variation Variación
+			isDefault
+			relationship: 2b72ae8b-8b8c-4c69-9ef7-fbd404107f2f
+			defaultHierarchy: LocalDateTable_2a5b1163-cd52-458c-a6b3-5bac1742866e.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año
+		lineageTag: 5a1644b6-0b4b-41e1-b6d0-ac8c08a0b3c1
+		summarizeBy: sum
+		isNameInferred
+		sourceColumn: [Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Periodo
+		lineageTag: 0cdd00f5-e63c-43b5-b63d-54db21ff080b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Periodo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Año'
+		lineageTag: 571cb3b0-17a7-4797-8a3e-371de408e9b4
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Orden Mes Año'
+		lineageTag: 8c1fb5e9-a1c2-4eea-a6f7-ec8faaa10627
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Orden Mes Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Completo'
+		lineageTag: fffc6cc3-cd7c-4aa7-90fe-ccbc73354021
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes Completo]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Corte'
+		lineageTag: 819124e3-03c1-4b6e-8607-5e53f4fe4459
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Día Corte]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Mes'
+		lineageTag: 38a81d51-daac-4b1a-ac55-5a16e18db014
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Día Mes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Día'
+		lineageTag: 25d6fdc9-0e9e-4f07-a591-bf24e04dbdc2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes Día]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Fecha Anterior' = calculated
+		mode: import
+		source =
+				SELECTCOLUMNS('Dim Calendario',
+				"Fecha",'Dim Calendario'[Date],
+				"Año",'Dim Calendario'[Año],
+				"Periodo",'Dim Calendario'[Periodo],
+				"Mes Año",'Dim Calendario'[Mes-Año],
+				"Orden Mes Año",'Dim Calendario'[Orden Mes Año],
+				"Mes Completo",'Dim Calendario'[Mes Completo],
+				"Día Corte",'Dim Calendario'[Día Corte],
+				"Día Mes",'Dim Calendario'[Día Mes],
+				"Mes Día",'Dim Calendario'[Mes Día]
+				)
+
+	annotation PBI_Id = dc3a6c29fb544c5e84918bdf4e7def32
+

@@ -1,0 +1,42 @@
+table 'Dim Operador'
+	lineageTag: ad8964bb-3eaf-454b-aa0d-f63b2eba2789
+
+	column NumOperador
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: b746e212-e91f-4ee7-8ee2-3e8f853cb5a4
+		summarizeBy: none
+		sourceColumn: NUM_OPERADOR
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Operador
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: fa5428d8-2326-4353-89e9-8c3a3e97518a
+		summarizeBy: none
+		sourceColumn: OPERADOR
+		sortByColumn: NumOperador
+
+		changedProperty = Name
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Dim Operador' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select * from CLIINC.C27612_DIM_OPERADOR ", CreateNavigationProperties=false])
+				in
+				    Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

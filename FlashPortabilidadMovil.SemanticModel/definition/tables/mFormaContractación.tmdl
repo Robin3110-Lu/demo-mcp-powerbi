@@ -1,0 +1,52 @@
+table mFormaContractación
+	lineageTag: 894b991f-b9be-4441-8598-a9fdb9c98b28
+
+	measure 'PostPago Competencia' = ```
+			
+			var vValidaTipoPortabilidad = SELECTEDVALUE('Indicadores Port'[Indicador])
+			
+			var vNoRealPostPago = CALCULATE([Port-Dinamico-No Real],'Dim Segmento'[FormaContratación]="Prepago")+CALCULATE([Port-Dinamico Real],'Dim Segmento'[FormaContratación]="Postpago")
+			
+			RETURN
+			 vNoRealPostPago 
+			
+			```
+		formatString: #,0
+		lineageTag: 70766e2f-d90a-47f1-af09-edc9fd8c3a48
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Prepago Competencia' = ```
+			
+			
+			var vNoRealPrepago =CALCULATE([Port-Dinamico-No Real],'Dim Segmento'[FormaContratación]="Postpago")+CALCULATE([Port-Dinamico Real],'Dim Segmento'[FormaContratación]="Prepago")
+			
+			return 
+			    vNoRealPrepago
+			```
+		formatString: #,0
+		lineageTag: a1316cff-3bb6-4f03-b141-b6e4b15c0802
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	column Columna1
+		dataType: string
+		lineageTag: dc90a0fb-b663-4a94-abc7-d66a7594d2ee
+		summarizeBy: none
+		sourceColumn: Columna1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition mFormaContractación = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

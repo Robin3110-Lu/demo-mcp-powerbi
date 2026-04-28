@@ -1,0 +1,49 @@
+table ParametroEjeHoja10
+	lineageTag: 41b459d2-cccd-420f-a663-eba1a7759e32
+
+	column ParametroEjeHoja10
+		lineageTag: 8fad3d57-3c07-4b40-a340-4dca6bd1f687
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'ParametroEjeHoja10 Orden'
+
+		relatedColumnDetails
+			groupByColumn: 'ParametroEjeHoja10 Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ParametroEjeHoja10 Campos'
+		isHidden
+		lineageTag: 4128ec98-a8d3-4a7a-b402-ff11295673b2
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'ParametroEjeHoja10 Orden'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ParametroEjeHoja10 Orden'
+		isHidden
+		formatString: 0
+		lineageTag: 4541e1af-95e5-4ce1-ac62-500280774696
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParametroEjeHoja10 = calculated
+		mode: import
+		source =
+				{
+				    ("Diarío", NAMEOF('Dim Calendario'[Dia]), 0),
+				    ("Semanal", NAMEOF('Dim Calendario'[SemanaEstandar]), 0)
+				
+				}
+
+	annotation PBI_Id = 02f1d560a8014d668203d79d76bde742
+

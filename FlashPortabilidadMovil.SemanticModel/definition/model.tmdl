@@ -1,0 +1,48 @@
+model Model
+	culture: es-ES
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: es-PE
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["Fact FlashPortabilidad","RangeStart","RangeEnd","Dim Segmento","Dim Ubicacion","Dim Operador","Dim CF","Dim Recarga","Dim Antiguedad","Dim Canal","Auxiliar","mFlashPortabilidad","Vista","mHajj","mTitulos","mVariaciones","TablaActualización","mFormaContractación"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'Fact FlashPortabilidad'
+ref table 'Dim Segmento'
+ref table 'Dim Ubicacion'
+ref table 'Dim Operador'
+ref table 'Dim CF'
+ref table 'Dim Recarga'
+ref table 'Dim Antiguedad'
+ref table 'Dim Canal'
+ref table 'Dim Calendario'
+ref table Auxiliar
+ref table Alterno
+ref table 'Fecha Anterior'
+ref table mFlashPortabilidad
+ref table DateTableTemplate_0eae06c4-b5cb-406c-b6f5-04948486291a
+ref table LocalDateTable_2a5b1163-cd52-458c-a6b3-5bac1742866e
+ref table Vista
+ref table mHajj
+ref table 'Indicadores Port'
+ref table 'Selector Real/Normal'
+ref table ParámetroLeyenda
+ref table mTitulos
+ref table SelectorUbicacion
+ref table mVariaciones
+ref table 'Indicadores Abs - Porcentual'
+ref table ParametroHoja7
+ref table ParámetroFechas
+ref table TablaActualización
+ref table LocalDateTable_685b0a62-05c7-44de-a112-dc4a362d45a8
+ref table mFormaContractación
+ref table Días
+ref table ParametroEjeHoja10
+
+ref cultureInfo es-ES
+

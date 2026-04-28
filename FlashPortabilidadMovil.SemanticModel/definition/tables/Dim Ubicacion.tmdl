@@ -1,0 +1,83 @@
+table 'Dim Ubicacion'
+	lineageTag: b79e8ce8-4664-45d3-805c-92871d2eaa48
+
+	column DepartamentoID
+		dataType: int64
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 1341a1b3-f3cb-4911-bdb0-551d9f3a2da1
+		summarizeBy: none
+		sourceColumn: DEPT_ID
+
+		changedProperty = Name
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Departamento
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 8aff056e-a4ce-437d-bcb7-55f81807b99f
+		dataCategory: StateOrProvince
+		summarizeBy: none
+		sourceColumn: DEPARTAMENTO
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column RegionID
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: afc4cbe1-6a1e-4f42-a508-7b1de0455133
+		summarizeBy: none
+		sourceColumn: REGION_ID
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OrdenRegion
+		dataType: double
+		sourceProviderType: Decimal(38, 127)
+		lineageTag: 5825275d-60f0-4069-9348-282c26c53912
+		summarizeBy: none
+		sourceColumn: ORDEN_REG
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Region
+		dataType: string
+		sourceProviderType: Varchar2
+		lineageTag: 9723e807-5bc8-4879-b00e-277433dddb09
+		summarizeBy: none
+		sourceColumn: REGION
+		sortByColumn: RegionID
+
+		changedProperty = Name
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Dim Ubicacion' = m
+		mode: import
+		source =
+				let
+				    Origen = Oracle.Database("scan-dwo.tim.com.pe:1521/DWO", [HierarchicalNavigation=true, Query="select dept_id, initcap(departamento)Departamento,region_id,initcap(des_region1)Region,orden_reg
+				 from CLIINC.FPM_DiM_UBICACION_PBI ", CreateNavigationProperties=false])
+				in
+				    Origen
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

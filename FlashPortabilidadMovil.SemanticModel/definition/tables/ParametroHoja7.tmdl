@@ -1,0 +1,49 @@
+table ParametroHoja7
+	lineageTag: 0c51a817-1f7d-41fc-96e1-fefb87736591
+
+	column ParametroHoja7
+		lineageTag: daaabab9-3d1e-4171-86dc-9faa65ef645f
+		summarizeBy: none
+		sourceColumn: [Value1]
+		sortByColumn: 'ParametroHoja7 Orden'
+
+		relatedColumnDetails
+			groupByColumn: 'ParametroHoja7 Campos'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ParametroHoja7 Campos'
+		isHidden
+		lineageTag: 27e1b869-f133-4d35-854c-af3939b64ce9
+		summarizeBy: none
+		sourceColumn: [Value2]
+		sortByColumn: 'ParametroHoja7 Orden'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 3,
+				  "kind": 2
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ParametroHoja7 Orden'
+		isHidden
+		formatString: 0
+		lineageTag: 39ccde3b-0611-41f4-92f9-cf6ed1d6a830
+		summarizeBy: sum
+		sourceColumn: [Value3]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ParametroHoja7 = calculated
+		mode: import
+		source =
+				{
+				    ("Rango Recarga", NAMEOF('Dim Recarga'[RangoRecarga]), 0),
+				    ("Rango Antigüedad", NAMEOF('Dim Antiguedad'[RangoAntiguedad]), 1),
+				    ("Rango Cargo Fijo", NAMEOF('Dim CF'[Rango]), 1)
+				}
+
+	annotation PBI_Id = f2bd4abbc2b24fdb91c5632a16918cb3
+

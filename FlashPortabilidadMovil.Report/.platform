@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "FlashPortabilidadMovil"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "810b2fde-84ec-46c9-b2ee-c10dde3afde2"
+  }
+}

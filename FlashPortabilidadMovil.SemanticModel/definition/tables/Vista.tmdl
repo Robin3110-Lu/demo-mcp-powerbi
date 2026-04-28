@@ -1,0 +1,33 @@
+table Vista
+	lineageTag: 3a33cc1e-80c4-4f93-9e8f-d8b4eb4da639
+
+	column Descripcion
+		dataType: string
+		lineageTag: a9b64cb3-133f-4b8c-91c2-db749375035d
+		summarizeBy: none
+		sourceColumn: Descripcion
+
+		annotation SummarizationSetBy = Automatic
+
+	column Orden
+		dataType: int64
+		formatString: 0
+		lineageTag: e2be1a79-0a6e-4856-8c78-9c2f643eb358
+		summarizeBy: sum
+		sourceColumn: Orden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Vista = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45Wcs7PLchJLclX0lEyVIrViVZyzE3KLwbyjMC8gMSi5MzEHCDfWCk2FgA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Descripcion = _t, Orden = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Descripcion", type text}, {"Orden", Int64.Type}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+

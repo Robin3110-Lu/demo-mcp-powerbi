@@ -1,0 +1,57 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "4daa332bd09b84808ab1",
+      "displayName": "Hoja1",
+      "children": [
+        "10024e007603c04a3700",
+        "738d1812ba137036da8e"
+      ]
+    },
+    {
+      "name": "64ba001536305cbbabd7",
+      "displayName": "Hoja2",
+      "children": [
+        "eedc3f07299c4055d787",
+        "64309613be73854128ac"
+      ]
+    },
+    {
+      "name": "5c07ef409ab6b9120de5",
+      "displayName": "Hoja 4",
+      "children": [
+        "8fc361bab60a0c672d3e",
+        "227e40d329e4abae94a3"
+      ]
+    },
+    {
+      "name": "7ee6ae651a164e4b5ee3",
+      "displayName": "Hoja 5",
+      "children": [
+        "c3134679a0576a3cc491",
+        "f5a63696b212b7466900",
+        "6d9919e88a05b72916d7",
+        "ba28e40d46719bc3576a",
+        "92d1240eb42337d28ecb",
+        "3276d1c200e957c0086c"
+      ]
+    },
+    {
+      "name": "51faa0d0e05258510005",
+      "displayName": "Hoja 6",
+      "children": [
+        "0a53ad979dcaa52c0620",
+        "46951acce49c514a862e"
+      ]
+    },
+    {
+      "name": "283f540d6204cc26af2f",
+      "displayName": "Hoja 7",
+      "children": [
+        "6ed10df4711b86314bca",
+        "e294d96cfffe65cd5e62"
+      ]
+    }
+  ]
+}

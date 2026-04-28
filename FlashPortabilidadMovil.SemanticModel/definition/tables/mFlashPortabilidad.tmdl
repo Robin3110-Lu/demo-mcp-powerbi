@@ -1,0 +1,393 @@
+table mFlashPortabilidad
+	lineageTag: 23da82e3-9d64-4bf8-baf9-84e865cd073e
+
+	measure 'Port Out' = ```
+			sum('Fact FlashPortabilidad'[LNPortOut]) 
+			```
+		formatString: #,0
+		displayFolder: PortOut
+		lineageTag: 3c0602aa-567f-41d6-a6f0-34537580eeec
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Port In' = ```
+			sum('Fact FlashPortabilidad'[LNPortIn]) 
+			```
+		formatString: #,0
+		displayFolder: PortIn
+		lineageTag: 8dc2d10f-e0b2-473c-82f4-0827d2c8b880
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Port Neto Normal' = mFlashPortabilidad[Port In]- mFlashPortabilidad[Port Out]
+		formatString: 0
+		displayFolder: PortNeto
+		lineageTag: 80f8093f-427f-43a7-96ed-0979e22b9a69
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Port-Neto Vista Normal' = ```
+			
+			
+			
+			
+			VAR vCompleto = CALCULATE([Port Neto Normal],'Dim Calendario'[Mes Completo] = TRUE())
+			VAR vMinDia = MIN('Días'[Días])
+			VAR vMaxDia = MAX('Días'[Días])
+			VAR vParcial = CALCULATE([Port Neto Normal],
+			'Dim Calendario'[Dia]>= vMinDia,
+			'Dim Calendario'[Dia]<= vMaxDia)
+			VAR vTotal =[Port Neto Normal]
+			VAR vParcialBlank = CALCULATE([Port Neto Normal],'Dim Calendario'[Día Corte] = TRUE())
+			RETURN
+			
+			IF(NOT(ISFILTERED('Días'[Días])),
+			
+			IF(
+			    HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcialBlank,vTotal)),0),
+			IF(HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcial,vTotal)),0))
+			
+			```
+		displayFolder: PortNeto
+		lineageTag: eb8ad03c-cc62-45f9-a244-4d71fcf2e86a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-In Vista Normal' =
+			
+			
+			
+			VAR vCompleto = CALCULATE([Port In],'Dim Calendario'[Mes Completo] = TRUE())
+			VAR vMinDia = MIN('Días'[Días])
+			VAR vMaxDia = MAX('Días'[Días])
+			VAR vParcial = CALCULATE([Port In],
+			'Dim Calendario'[Dia]>= vMinDia,
+			'Dim Calendario'[Dia]<= vMaxDia)
+			VAR vTotal =[Port In]
+			VAR vParcialBlank = CALCULATE([Port In],'Dim Calendario'[Día Corte] = TRUE())
+			RETURN
+			
+			IF(NOT(ISFILTERED('Días'[Días])),
+			
+			IF(
+			    HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcialBlank,vTotal)),0),
+			IF(HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcial,vTotal)),0))
+		displayFolder: PortIn
+		lineageTag: 9a686ff1-3b54-40c6-a209-f816af773ab4
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-Out Vista Normal' = ```
+			
+			
+			
+			
+			VAR vCompleto = CALCULATE([Port Out],'Dim Calendario'[Mes Completo] = TRUE())
+			VAR vMinDia = MIN('Días'[Días])
+			VAR vMaxDia = MAX('Días'[Días])
+			VAR vParcial = CALCULATE([Port Out],
+			'Dim Calendario'[Dia]>= vMinDia,
+			'Dim Calendario'[Dia]<= vMaxDia)
+			VAR vTotal =[Port Out]
+			
+			VAR vParcialBlank = CALCULATE([Port Out],'Dim Calendario'[Día Corte] = TRUE())
+			RETURN
+			
+			IF(NOT(ISFILTERED('Días'[Días])),
+			
+			IF(
+			    HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcialBlank,vTotal)),0),
+			IF(HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcial,vTotal)),0))
+			
+			
+			```
+		displayFolder: PortOut
+		lineageTag: df4caa3a-3b66-4a23-842e-0dc735327b48
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Ratio Port In / Port Out' = ```
+			mFlashPortabilidad[Port In Final]/mFlashPortabilidad[Port Out Final] 
+			```
+		formatString: 0.00
+		lineageTag: af266e22-0036-425e-b093-9f3345698c32
+
+	measure 'Port In Real' = ```
+			sum('Fact FlashPortabilidad'[LNPortInReal]) 
+			```
+		displayFolder: PortIn
+		lineageTag: 517a972c-f08b-4cb5-bb94-ce9a69515c33
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port Out Real' = ```
+			sum('Fact FlashPortabilidad'[LNPortOutReal]) 
+			```
+		displayFolder: PortOut
+		lineageTag: a41f2172-ffda-46f6-b269-1482b3be7ee7
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-In Vista Real' =
+			
+			
+			
+			VAR vCompleto = CALCULATE([Port In Real],'Dim Calendario'[Mes Completo] = TRUE())
+			VAR vMinDia = MIN('Días'[Días])
+			VAR vMaxDia = MAX('Días'[Días])
+			VAR vParcial = CALCULATE([Port In Real],
+			'Dim Calendario'[Dia]>= vMinDia,
+			'Dim Calendario'[Dia]<= vMaxDia)
+			VAR vTotal =[Port In Real]
+			VAR vParcialBlank = CALCULATE([Port In Real],'Dim Calendario'[Día Corte] = TRUE())
+			RETURN
+			
+			IF(NOT(ISFILTERED('Días'[Días])),
+			
+			IF(
+			    HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcialBlank,vTotal)),0),
+			IF(HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcial,vTotal)),0))
+		displayFolder: PortIn
+		lineageTag: 0103da95-00dc-4f11-be54-db67214a2b76
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port In Final' = ```
+			
+			
+			 SWITCH(
+			
+			    [Tipo Seleccionado],
+			    "Normal",[Port-In Vista Normal],
+			    "Real",[Port-In Vista Real],
+			    "Real/Normal",DIVIDE([Port-In Vista Real],[Port-In Vista Normal]))
+			```
+		displayFolder: PortIn
+		lineageTag: d937c58f-e777-4db7-b5d3-3884d1994b1a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-Out Vista Real' = ```
+			
+			
+			
+			
+			VAR vCompleto = CALCULATE([Port Out Real],'Dim Calendario'[Mes Completo] = TRUE())
+			VAR vMinDia = MIN('Días'[Días])
+			VAR vMaxDia = MAX('Días'[Días])
+			VAR vParcial = CALCULATE([Port Out Real],
+			'Dim Calendario'[Dia]>= vMinDia,
+			'Dim Calendario'[Dia]<= vMaxDia)
+			VAR vTotal =[Port Out Real]
+			VAR vParcialBlank = CALCULATE([Port Out Real],'Dim Calendario'[Día Corte] = TRUE())
+			RETURN
+			
+			IF(NOT(ISFILTERED('Días'[Días])),
+			
+			IF(
+			    HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcialBlank,vTotal)),0),
+			IF(HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcial,vTotal)),0))
+			
+			
+			```
+		displayFolder: PortOut
+		lineageTag: e77f2096-9c82-444e-b7f8-e0f782d02416
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port-Neto Vista Real' = ```
+			
+			
+			
+			
+			VAR vCompleto = CALCULATE([Port Neto Real],'Dim Calendario'[Mes Completo] = TRUE())
+			VAR vMinDia = MIN('Días'[Días])
+			VAR vMaxDia = MAX('Días'[Días])
+			VAR vParcial = CALCULATE([Port Neto Real],
+			'Dim Calendario'[Dia]>= vMinDia,
+			'Dim Calendario'[Dia]<= vMaxDia)
+			VAR vTotal =[Port Neto Real]
+			VAR vParcialBlank = CALCULATE([Port Neto Real],'Dim Calendario'[Día Corte] = TRUE())
+			RETURN
+			
+			IF(NOT(ISFILTERED('Días'[Días])),
+			
+			IF(
+			    HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcialBlank,vTotal)),0),
+			IF(HASONEVALUE(Vista[Descripcion]),
+			    IF(SELECTEDVALUE(Vista[Descripcion]) = "Completo",vCompleto,
+			     IF(SELECTEDVALUE(Vista[Descripcion])= "Parcial", vParcial,vTotal)),0))
+			
+			
+			```
+		displayFolder: PortNeto
+		lineageTag: ac96636a-6d07-4fb1-8755-9c298a75f204
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port Neto Real' = mFlashPortabilidad[Port In Real]- mFlashPortabilidad[Port Out Real]
+		displayFolder: PortNeto
+		lineageTag: 13a51b0c-2ffc-4b7f-af99-f8d4f12fa44d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Port Out Final' = ```
+			
+			
+			 SWITCH(
+			
+			    [Tipo Seleccionado],
+			    "Normal",[Port-Out Vista Normal],
+			    "Real",[Port-Out Vista Real],
+			    "Real/Normal",DIVIDE([Port-Out Vista Real],[Port-Out Vista Normal]))
+			```
+		formatString: #,0
+		displayFolder: PortOut
+		lineageTag: d7cc7187-6357-476d-a095-597104b153b0
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Port Neto Final' = ```
+			
+			
+			 SWITCH(
+			
+			    [Tipo Seleccionado],
+			    "Normal",[Port Neto Normal],
+			    "Real",[Port Neto Real],
+			    "Real/Normal",DIVIDE([Port-Neto Vista Real],[Port-Neto Vista Normal]))
+			```
+		formatString: #,0
+		displayFolder: PortNeto
+		lineageTag: 03ecd4d9-a1b4-4f4b-9926-d7d83f23fcae
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure '%Port In Ubicacion' =
+			
+			
+			DIVIDE(
+			        [Port In Ubicacion],
+			        CALCULATE([Port In Ubicacion],
+			        REMOVEFILTERS('Dim Operador'),REMOVEFILTERS('Dim Segmento'[FormaContratación]),REMOVEFILTERS('Dim Ubicacion'[Region]),REMOVEFILTERS('Dim Canal'[MacroCanal])))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 1febcf5d-9698-4cc1-a709-6bdcdaaee879
+
+	measure 'Port Out Final Negativo' = ```
+			
+			
+			 SWITCH(
+			
+			    [Tipo Seleccionado],
+			    "Normal",[Port-Out Vista Normal]*-1,
+			    "Real",[Port-Out Vista Real]*-1)
+			```
+		displayFolder: PortOut
+		lineageTag: d45f5a1b-83f5-483f-8502-398ff26b8e5c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Total Departamentos Pierde' = ```
+			
+			
+			var vDepartamentosConPerdida =
+			ADDCOLUMNS( VALUES('Dim Ubicacion'[Departamento]),
+			                "@Movistar",CALCULATE([Port Neto Ubicacion],'Dim Operador'[Operador]="Movistar"),
+			                "@Bitel",CALCULATE([Port Neto Ubicacion],'Dim Operador'[Operador]="Bitel"),
+			                "@Entel",CALCULATE([Port Neto Ubicacion],'Dim Operador'[Operador]="Entel"))
+			
+			RETURN
+			            COUNTROWS(FILTER(vDepartamentosConPerdida,[@Movistar]<0 || [@Bitel]<0  || [@Entel]<0 ))
+			
+			```
+		formatString: 0
+		lineageTag: 8f7f834c-e11b-44f7-b0cc-52d52a71fa31
+
+	measure 'Bitel Departamentos Pierde' =
+			
+			
+			COUNTROWS(FILTER(VALUES('Dim Ubicacion'[Departamento]),calculate([Port Neto Ubicacion],'Dim Operador'[Operador]="Bitel")<0))
+		formatString: 0
+		lineageTag: 24d5ba55-0886-4581-8a00-3c9a0dace1d4
+
+	measure 'Entel Departamentos Pierde' =
+			
+			
+			COUNTROWS(FILTER(VALUES('Dim Ubicacion'[Departamento]),calculate([Port Neto Ubicacion],'Dim Operador'[Operador]="Entel")<0))
+		formatString: 0
+		lineageTag: ef70036e-f713-4b89-b881-349bff2e0134
+
+	measure 'Movistar Departamentos Pierde' =
+			
+			
+			COUNTROWS(FILTER(VALUES('Dim Ubicacion'[Departamento]),calculate([Port Neto Ubicacion],'Dim Operador'[Operador]="Movistar")<0))
+		formatString: 0
+		lineageTag: 55b699f1-42b4-49dc-8c9d-f68b995cbbac
+
+	measure '%Port Out Ubicacion' =
+			
+			
+			DIVIDE(
+			        [Port Out Ubicacion],
+			        CALCULATE([Port Out Ubicacion],
+			        REMOVEFILTERS('Dim Operador'),REMOVEFILTERS('Dim Segmento'[FormaContratación]),REMOVEFILTERS('Dim Ubicacion'[Region])))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 5ec31f2e-78a5-444f-ac27-e7d47c50f306
+
+	measure '%Port In Canal-Ubicacion' =
+			
+			
+			DIVIDE(
+			        [Port In Canal-Ubicacion],
+			        CALCULATE([Port In Canal-Ubicacion],
+			        REMOVEFILTERS('Dim Operador'[Operador]),REMOVEFILTERS('Dim Segmento'[FormaContratación]),REMOVEFILTERS('Dim Ubicacion'[Region]),REMOVEFILTERS('Dim Canal'[MacroCanal]),REMOVEFILTERS('Dim Recarga'[RangoRecarga]),REMOVEFILTERS('Dim CF'[Rango]),REMOVEFILTERS('Dim Antiguedad'[RangoAntiguedad])))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: eea88b48-6f8f-4732-8111-0c04c69a834e
+
+	measure %PortDinamico =
+			
+			
+			DIVIDE(
+			        [Port-Dinamico],
+			        CALCULATE([Port-Dinamico], REMOVEFILTERS('Dim Operador'),REMOVEFILTERS('Dim Segmento'),REMOVEFILTERS('Dim Ubicacion'),REMOVEFILTERS('Dim Canal'),REMOVEFILTERS('Dim Recarga'),REMOVEFILTERS('Dim CF'),REMOVEFILTERS('Dim Antiguedad')))
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 6f0b8140-cc1b-476d-912d-eb15e1084412
+
+	partition mFlashPortabilidad = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegación
+
