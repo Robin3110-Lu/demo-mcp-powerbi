@@ -1,4 +1,4 @@
-table mFormaContractación
+table mFormaContratación
 	lineageTag: 894b991f-b9be-4441-8598-a9fdb9c98b28
 
 	measure 'PostPago Competencia' = ```
