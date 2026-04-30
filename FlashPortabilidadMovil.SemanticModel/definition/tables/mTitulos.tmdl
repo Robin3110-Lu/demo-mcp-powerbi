@@ -1,10 +1,10 @@
 table mTitulos
 	lineageTag: 98f3b477-b27a-46cc-a5ea-2829a86d9582
 
-	measure 'Prueba OID 1' = "Claro por"&" "&SELECTCOLUMNS('ParámetroLeyenda','ParámetroLeyenda'[Parámetro])&", "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+	measure 'Titulo Hoja 2' = "Claro por"&" "&SELECTCOLUMNS('ParámetroLeyenda','ParámetroLeyenda'[Parámetro])&", "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
 		lineageTag: 31377068-5f53-46f9-a9b9-85a460610b8f
 
-	measure 'Prueba OID 2' = ```
+	measure 'Titulo Hoja 4' = ```
 			"Claro por Departamento de"&"  "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])  
 			```
 		lineageTag: 79857ee4-491d-4392-ad44-8390d252cd6a
