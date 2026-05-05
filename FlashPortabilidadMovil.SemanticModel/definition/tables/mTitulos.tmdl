@@ -1,7 +1,7 @@
 table mTitulos
 	lineageTag: 98f3b477-b27a-46cc-a5ea-2829a86d9582
 
-	measure 'Titulo Hoja 2' = "Claro por"&" "&SELECTCOLUMNS('ParámetroLeyenda','ParámetroLeyenda'[Parámetro])&", "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
+	measure 'Titulo Hoja Prueba Claro' = "Claro por"&" "&SELECTCOLUMNS('ParámetroLeyenda','ParámetroLeyenda'[Parámetro])&", "&SELECTEDVALUE(SelectorUbicacion[TipoUbicacion])
 		lineageTag: 31377068-5f53-46f9-a9b9-85a460610b8f
 
 	measure 'Titulo Hoja 4' = ```
